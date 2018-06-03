@@ -1,0 +1,22 @@
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="../../static/css/bootstrap.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-xs-8 col-xs-offset-2">
+            {% if request.user.is_staff or request.user.is_superuser %}
+                <br>
+                <a href="{% url "post:create_post" %}" class="btn btn-success">Add new post</a>
+            {% endif %}
+            {% for post in posts %}
+                <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+                <h3>{{ post.content|truncatechars:20 }}</h3>
+                <h4>User: {{ post.user.username }} | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
+                <h4>Upload at: {{ post.timestamp|timesince }} ago</h4>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
