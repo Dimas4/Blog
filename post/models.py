@@ -1,20 +1,22 @@
-from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from django.db.models.signals import pre_save
-
+from likes.models import Like
+from django.db import models
 
 
 class PostManager(models.Manager):
     def high_rate(self, *args, **kwargs):
-        return super(PostManager, self).filter(rate >= 50)
+        return Posts.objects.filter(rate__range=(25, 101))
 
     def middle_rate(self, *args, **kwargs):
-        return super(PostManager, self).filter(rate < 50 and rate >= 10 )
+        return Posts.objects.filter(rate__range=(5, 25))
 
     def low_rate(self, *args, **kwargs):
-        return super(PostManager, self).filter(rate < 10)
+        return Posts.objects.filter(rate__range=(0, 5))
 
 
 class Posts(models.Model):
@@ -28,6 +30,8 @@ class Posts(models.Model):
 
     objects = PostManager()
 
+    likes = GenericRelation(Like)
+
     def get_absolute_url(self):
         return reverse("post:detail_page", kwargs={"id": self.id})
 
@@ -36,6 +40,17 @@ class Posts(models.Model):
 
     def delete_post(self):
         return reverse("post:delete_page", kwargs={"id": self.id})
+
+    @property
+    def total_likes(self):
+        return self.likes.count()
+
+    def is_like(self, user):
+        if not user.is_authenticated:
+            return False
+        obj_type = ContentType.objects.get_for_model(self)
+        likes = Like.objects.filter(content_type=obj_type, object_id=self.id, user=user)
+        return likes.exists()
 
     def __str__(self):
         return self.title

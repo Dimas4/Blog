@@ -7,16 +7,8 @@
 {% block content %}
     <div class="container">
         <div class="col-xs-8 col-xs-offset-2">
-            <h2>Choose article's rate</h2>
+            <h2>{{ title }} rate</h2>
 
-            <a href="{% url "post:high_rate" %}">High</a>
-            <a href="{% url "post:middle_rate" %}">Middle</a>
-            <a href="{% url "post:low_rate" %}">Low</a>
-
-            {% if request.user.is_staff or request.user.is_superuser %}
-                <br>
-                <a href="{% url "post:create_post" %}" class="btn btn-success">Add new post</a>
-            {% endif %}
             {% for post in posts %}
                 <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
                 <h3>{{ post.content|truncatechars:20 }}</h3>

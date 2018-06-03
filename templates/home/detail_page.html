@@ -16,6 +16,13 @@
             <a href="{{ post.edit_post }}" class="btn btn-success">Edit post</a>
             <a href="{{ post.delete_post }}" class="btn btn-danger">Delete post</a>
             {% endif %}
+            <h4>Total likes: {{ post.total_likes }}</h4>
+            {% if not check_like %}
+                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary">Like</a>
+            {% else %}
+                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}
