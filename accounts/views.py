@@ -10,6 +10,7 @@ from .forms import LoginForm, RegisterForm
 
 
 def login_view(request):
+    title = "Login"
     form = LoginForm(request.POST or None)
     if form.is_valid():
         username = form.cleaned_data.get("username")
@@ -21,6 +22,7 @@ def login_view(request):
 
 
 def register_view(request):
+    title = "Registration"
     form = RegisterForm(request.POST or None)
     if form.is_valid():
         user = form.save(commit=False)
@@ -33,6 +35,7 @@ def register_view(request):
 
     context = {
         "form": form,
+        'title': title
     }
 
     return render(request, "home/forms.html", context)

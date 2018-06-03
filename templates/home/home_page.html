@@ -6,10 +6,6 @@
         <div class="col-xs-8 col-xs-offset-2">
             <h2>Choose article's rate</h2>
 
-            {% if request.user.is_authenticated %}
-                !
-            {% endif %}
-
             <a href="{% url "post:high_middle_low_rate" slug='high_rate' %}" class="btn bg-info">High</a>
             <a href="{% url "post:high_middle_low_rate" slug='middle_rate' %}" class="btn bg-info">Middle</a>
             <a href="{% url "post:high_middle_low_rate" slug='low_rate' %}" class="btn bg-info">Low</a>

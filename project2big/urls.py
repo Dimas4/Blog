@@ -10,7 +10,8 @@ urlpatterns = [
     path('login/', login_view, name='login_view'),
     path('logout/', logout_view, name='logout_view'),
     path('register/', register_view, name='register_view'),
-    path('post/', include(('post.urls', 'post'), namespace='post')),
+    path('', include(('post.urls', 'post'), namespace='post')),
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
