@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
@@ -40,6 +41,7 @@ def detail_page(request, id):
     return render(request, "home/detail_page.html", context)
 
 
+@login_required
 def create_post(request):
     form = FormCreateEdit(request.POST or None)
     if form.is_valid():
@@ -56,6 +58,7 @@ def create_post(request):
     return render(request, "home/create_page.html", context)
 
 
+@login_required
 def edit_page(request, id):
     post = Posts.objects.get(id=id)
     if request.user != post.user:
@@ -76,6 +79,7 @@ def edit_page(request, id):
     return render(request, "home/edit_page.html", context)
 
 
+@login_required
 def delete_page(request, id):
     post = Posts.objects.get(id=id)
     if request.user != post.user:
@@ -100,6 +104,7 @@ def add_delete_like(user, id, model_type, obj, post):
     return HttpResponseRedirect(post.get_absolute_url())
 
 
+@login_required
 def like_page(request, id):
     model_type = ContentType.objects.get_for_model(Posts)
     obj = Like.objects.filter(content_type=model_type, object_id=id, user=request.user)
@@ -108,30 +113,22 @@ def like_page(request, id):
     return add_delete_like(user, id, model_type, obj, post)
 
 
-def high_rate(request):
-    posts = Posts.objects.high_rate()
+def high_middle_low_rate(request, slug):
+    if slug not in ['high_rate', 'middle_rate', 'low_rate']:
+        raise Http404
+
+    if slug == 'high_rate':
+        posts = Posts.objects.high_rate()
+        slug1 = "High"
+    if slug == 'middle_rate':
+        posts = Posts.objects.middle_rate()
+        slug1 = "Middle"
+    if slug == 'low_rate':
+        posts = Posts.objects.low_rate()
+        slug1 = "Low"
+
     context = {
         'posts': posts,
-        'title': 'High rate',
+        'title': slug1,
     }
     return render(request, "home/choose_rate.html", context)
-
-
-def middle_rate(request):
-    posts = Posts.objects.middle_rate()
-    context = {
-        'posts': posts,
-        'title': 'Middle rate',
-    }
-    return render(request, "home/choose_rate.html", context)
-
-
-def low_rate(request):
-    posts = Posts.objects.low_rate()
-    context = {
-        'posts': posts,
-        'title': 'Low rate',
-    }
-    return render(request, "home/choose_rate.html", context)
-
-

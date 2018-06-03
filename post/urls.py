@@ -7,18 +7,15 @@ from .views import (
     delete_page,
     create_post,
     like_page,
-    high_rate,
-    middle_rate,
-    low_rate
+    high_middle_low_rate,
+    # high_rate,
+    # middle_rate,
+    # low_rate
     )
 
 urlpatterns = [
     path('', home_page, name='home_page'),
-
-    path('high/', high_rate, name='high_rate'),
-    path('middle/', middle_rate, name='middle_rate'),
-    path('low/', low_rate, name='low_rate'),
-
+    re_path('^rate/(?P<slug>[-\w]+)/$', high_middle_low_rate, name='high_middle_low_rate'),
     path('create/', create_post, name='create_post'),
     re_path('^(?P<id>\d+)/$', detail_page, name='detail_page'),
     re_path('^(?P<id>\d+)/like$', like_page, name='like_page'),

@@ -1,8 +1,5 @@
-{% load staticfiles %}
+{% extends "home/base.html" %}
 
-{% block head %}
-    <link rel="stylesheet" href="../../static/css/bootstrap.css">
-{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -22,7 +19,6 @@
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
             {% endif %}
-
         </div>
     </div>
 {% endblock %}
