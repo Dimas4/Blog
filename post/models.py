@@ -19,10 +19,18 @@ class PostManager(models.Manager):
         return Posts.objects.filter(rate__range=(0, 5))
 
 
+def generate_image_path(instance, filename):
+    filename = instance.id
+    return "{directory}/{file}".format(directory=instance.id//7, file=filename)
+
+
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()
+
+    # image = models.ImageField(upload_to=generate_image_path)
+
     rate = models.IntegerField(default=0)
     views = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)

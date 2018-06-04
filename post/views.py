@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.db.models import F
 import math
 
+from comments.forms import CommentForm
+from comments.models import Comments
 from .forms import FormCreateEdit
 from likes.models import Like
 from .models import Posts
@@ -16,7 +18,7 @@ User = get_user_model()
 
 
 def home_page(request):
-    posts = Posts.objects.all()
+    posts = Posts.objects.all().order_by("-timestamp")
     context = {
         'posts': posts
     }
@@ -25,6 +27,15 @@ def home_page(request):
 
 def detail_page(request, id):
     post = Posts.objects.get(id=id)
+    content_type = ContentType.objects.get_for_model(Comments)
+
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        content = form.cleaned_data.get('content')
+        Comments.objects.create(content_type=content_type, object_id=id, user=request.user, content=content)
+        return HttpResponseRedirect(post.get_absolute_url())
+
+    comments = Comments.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
 
     check_like = Posts.is_like(post, request.user)
 
@@ -35,7 +46,9 @@ def detail_page(request, id):
     post = Posts.objects.get(id=id)
     context = {
         'post': post,
-        'check_like': check_like
+        'comments': comments,
+        'check_like': check_like,
+        'form': form
     }
 
     return render(request, "home/detail_page.html", context)
@@ -108,7 +121,7 @@ def add_delete_like(user, id, model_type, obj, post):
 def like_page(request, id):
     model_type = ContentType.objects.get_for_model(Posts)
     obj = Like.objects.filter(content_type=model_type, object_id=id, user=request.user)
-    post = Posts.objects.get(id=id)
+    post = model_type.get_object_for_this_type(id=id)  # or post = Posts.objects.get(id=id)
     user = request.user
     return add_delete_like(user, id, model_type, obj, post)
 

@@ -19,6 +19,24 @@
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
             {% endif %}
+
+            {% if request.user.is_authenticated %}
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit">
+                </form>
+            {% else %}
+                <h2>If you want to add new comments, you must be register</h2>
+            {% endif %}
+            <h2>All comments:</h2>
+            {% for comment in comments %}
+                <h3>{{ comment.content }} | {{ comment.user }}</h3>
+                <h4>{{ comment.timestamp|timesince }} ago</h4>
+                <hr>
+            {% endfor %}
+
+
         </div>
     </div>
 {% endblock %}
