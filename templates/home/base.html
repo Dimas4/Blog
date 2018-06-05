@@ -47,8 +47,13 @@
                                     </div>
                                     <div class="col-lg-8">
                                         <p class="text-left"><strong>{{ request.user.username }}</strong></p>
-                                        <a href="{% url "accounts:account_change_profile" %}" class="btn btn-success">Change profile</a>
                                         <a href="{% url "accounts:account" id=request.user.id %}" class="btn btn-success">Account</a>
+                                        <br>
+                                        <br>
+                                        <a href="{% url "accounts:account_change_profile" %}" class="btn btn-success">Change profile</a>
+                                        <br>
+                                        <br>
+                                        <a href="{% url "accounts:change_password" %}" class="btn btn-success">Change password</a>
                                     </div>
                                 </div>
                             </div>

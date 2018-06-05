@@ -6,7 +6,28 @@ from django.contrib.auth import (
     logout,
 )
 
+
 User = get_user_model()
+
+
+class ChangePassword(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
+
+    class Meta:
+        model = User
+        fields = [
+            'password',
+        ]
+
+    def clean(self, *args, **kwargs):
+        password = self.cleaned_data.get("password")
+        password2 = self.cleaned_data.get("password2")
+        if password != password2:
+            raise forms.ValidationError("Password don't math!")
+        if len(password) < 8:
+            raise forms.ValidationError("Password less then 8 letters")
+        return super(ChangePassword, self).clean(*args, **kwargs)
 
 
 class ChangeForm(forms.ModelForm):

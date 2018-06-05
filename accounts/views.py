@@ -9,17 +9,38 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .forms import LoginForm, RegisterForm, ChangeForm
+from .forms import (
+    LoginForm,
+    RegisterForm,
+    ChangeForm,
+    ChangePassword
+    )
+
+
+def change_password(request):
+    form = ChangePassword(request.POST or None)
+    if form.is_valid():
+        password = form.cleaned_data.get("password")
+        request.user.set_password(password)
+        request.user.save()
+        user = authenticate(username=request.user.username, password=request.user.password)
+        login(request, user)
+        redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
+        return HttpResponseRedirect(redirect_to_profile)
+
+    context = {
+        'form': form
+    }
+    return render(request, "home/change_password.html", context)
 
 
 def account_change_profile(request):
-    user = request.user
     form = ChangeForm(request.POST or None)
     if form.is_valid():
-        user.first_name = form.cleaned_data.get('first_name')
-        user.last_name = form.cleaned_data.get('last_name')
-        user.save()
-        redirect_to_profile = reverse("accounts:account", kwargs={"id": user.id})
+        request.user.first_name = form.cleaned_data.get('first_name')
+        request.user.last_name = form.cleaned_data.get('last_name')
+        request.user.save()
+        redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
         return HttpResponseRedirect(redirect_to_profile)
 
     context = {
