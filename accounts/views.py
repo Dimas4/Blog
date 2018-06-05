@@ -7,11 +7,28 @@ from django.contrib.auth import (
 from django.http import HttpResponseRedirect,Http404
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ChangeForm
 
 
-def account(request, id):
+def account_change_profile(request):
+    user = request.user
+    form = ChangeForm(request.POST or None)
+    if form.is_valid():
+        user.first_name = form.cleaned_data.get('first_name')
+        user.last_name = form.cleaned_data.get('last_name')
+        user.save()
+        redirect_to_profile = reverse("accounts:account", kwargs={"id": user.id})
+        return HttpResponseRedirect(redirect_to_profile)
+
+    context = {
+        'form': form
+    }
+    return render(request, "home/change_profile.html", context)
+
+
+def account_home(request, id):
     try:
         user = User.objects.get(id=id)
     except:

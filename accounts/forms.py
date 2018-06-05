@@ -9,6 +9,15 @@ from django.contrib.auth import (
 User = get_user_model()
 
 
+class ChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+        ]
+
+
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
