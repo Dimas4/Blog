@@ -40,6 +40,9 @@ class Posts(models.Model):
 
     likes = GenericRelation(Like)
 
+    def get_user_url(self):
+        return reverse("accounts:account", kwargs={"id": self.user.id})
+
     def get_absolute_url(self):
         return reverse("post:detail_page", kwargs={"id": self.id})
 

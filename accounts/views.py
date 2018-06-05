@@ -4,9 +4,23 @@ from django.contrib.auth import (
     logout,
     )
 
+from django.http import HttpResponseRedirect,Http404
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegisterForm
+
+
+def account(request, id):
+    try:
+        user = User.objects.get(id=id)
+    except:
+        return HttpResponseRedirect('/')
+
+    context = {
+        'user': user
+    }
+    return render(request, "home/user_account.html", context)
 
 
 def login_view(request):

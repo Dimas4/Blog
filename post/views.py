@@ -39,7 +39,7 @@ def detail_page(request, id):
 
     check_like = Posts.is_like(post, request.user)
 
-    post.rate = math.ceil(post.likes.count() / post.views)
+    post.rate = math.ceil(post.likes.count() / (post.views + 1))
     post.views = F('views') + 1
     post.save()
 

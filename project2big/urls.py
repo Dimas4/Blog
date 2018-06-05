@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout_view'),
     path('register/', register_view, name='register_view'),
     path('', include(('post.urls', 'post'), namespace='post')),
+    path('account/', include(('accounts.urls', 'accounts'), namespace='accounts')),
 
 ]
 

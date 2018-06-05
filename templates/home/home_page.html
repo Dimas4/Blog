@@ -20,7 +20,7 @@
                 {% for post in posts %}
                     <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
                     <h3>{{ post.content|truncatechars:20 }}</h3>
-                    <h4>User: {{ post.user.username }} | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
+                    <h4>User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
                     <h4>Upload at: {{ post.timestamp|timesince }} ago</h4>
                 {% endfor %}
             {% else %}
