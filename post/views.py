@@ -68,7 +68,7 @@ def detail_page(request, id):
 
 @login_required
 def create_post(request):
-    form = FormCreateEdit(request.POST or None)
+    form = FormCreateEdit(request.POST or None, request.FILES or None)
     if form.is_valid():
         create = form.save(commit=False)
         create.user = request.user

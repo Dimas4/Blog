@@ -2,21 +2,42 @@
 
 
 {% block content %}
+<div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
     <div class="container">
-        <div class="col-xs-8 col-xs-offset-2">
-            <h2>{{ title }} rate</h2>
-
-            {% if posts %}
+        <div class="col-xs-10 col-xs-offset-2">
+            <div class="row">
+                <div class="container">
+                <h2 class="btn btn-default btn-lg btn-block">{{ title }} rate</h2>
+                <hr>
+                </div>
                 {% for post in posts %}
-                    <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-                    <h3>{{ post.content|truncatechars:20 }}</h3>
-                    <h4>User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
-                    <h4>Upload at: {{ post.timestamp|timesince }} ago</h4>
+                    {% if forloop.counter0|divisibleby:3 %}
+                        </div><br><br><div class="row">
+                    {% endif %}
+                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom: 20px;">
+                            <div class="card card-cascade width_card">
+                              <div class="view view-cascade overlay">
+                                  {% if post.image %}
+                                      <div class="view zoom">
+                                        <img src="{{ post.image.url }}" class="img-fluid " alt="">
+                                    </div>
+                                      <div class="mask flex-center rgba-black-strong">
+                                        <p class="white-text">Author: {{ post.user.username }}</p>
+                                    </div>
+                                {% endif %}
+                              </div>
+                              <div class="card-body card-body-cascade text-center">
+                                <h4 class="card-title"><strong><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></strong></h4>
+                                <h6 class="font-weight-bold indigo-text py-2">{{ post.content|truncatechars:20 }}</h6>
+                                <p class="card-text"> User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</p>
+                                <a href="{{ post.get_absolute_url }}" class="btn peach-gradient btn-lg ">Read more</a>
+                              </div>
+                            </div>
+                        </div>
                 {% endfor %}
-            {% else %}
-                    <h2 class="alert alert-info">Ops, we haven't articles with this rate</h2>
-                {% endif %}
-
+            </div>
+        </div>
         </div>
     </div>
+</div>
 {% endblock %}

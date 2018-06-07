@@ -6,7 +6,7 @@
     <div class="container">
         <div class="col-xs-8 col-xs-offset-2">
             <h2>Create new post</h2>
-            <form action="." method="POST">
+            <form action="." method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
                 <br>

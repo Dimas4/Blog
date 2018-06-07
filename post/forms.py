@@ -8,6 +8,7 @@ class FormCreateEdit(forms.ModelForm):
         fields = [
             "title",
             "content",
+            "image",
         ]
 
 
