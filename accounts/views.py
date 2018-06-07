@@ -62,6 +62,9 @@ def account_home(request, id):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse("post:home_page"))
+
     title = "Login"
     form = LoginForm(request.POST or None)
     if form.is_valid():
@@ -74,6 +77,9 @@ def login_view(request):
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse("post:home_page"))
+
     title = "Registration"
     form = RegisterForm(request.POST or None)
     if form.is_valid():

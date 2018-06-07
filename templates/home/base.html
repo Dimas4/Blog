@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="../../static/css/custom_style.css">
     <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
 
-    {% block head %}
-    {% endblock %}
 </head>
 <body style="background: linear-gradient(#f5f7fa, #c3cfe2);">
 
@@ -38,14 +36,26 @@
           </li>
         </ul>
           <ul class="navbar-nav nav-flex-icons">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">You: {{ request.user.username }}</a>
-                <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
+              {% if request.user.is_authenticated %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">You: {{ request.user.username }}</a>
+                    <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url "accounts:account" id=request.user.id %}">My account</a>
+                        <a class="dropdown-item" href="{% url "accounts:account_change_profile" %}">Edit account</a>
+                        <a class="dropdown-item" href="{% url "accounts:change_password" %}">Change password</a>
+                        <a class="dropdown-item" href="{% url "logout_view" %}">Logout</a>
+                    </div>
+                  </li>
+              {% else %}
+                  <ul class="navbar-nav mr-auto">
+                      <li class="nav-item active">
+                        <a class="nav-link" href="{% url "login_view" %}">Login</a>
+                      </li>
+                      <li class="nav-item active">
+                        <a class="nav-link" href="{% url "register_view" %}">Register</a>
+                      </li>
+                    </ul>
+              {% endif %}
           </ul>
       </div>
     </div>
@@ -57,161 +67,7 @@
     {% endblock %}
 
 </div>
-{#    <footer class="page-footer font-small stylish-color-dark pt-4 mt-4" style="flex: 0 0 auto;">#}
-{##}
-{#  <!-- Footer Links -->#}
-{#  <div class="container text-center text-md-left">#}
-{##}
-{#    <!-- Grid row -->#}
-{#    <div class="row">#}
-{##}
-{#      <!-- Grid column -->#}
-{#      <div class="col-md-4 mx-auto">#}
-{##}
-{#        <!-- Content -->#}
-{#        <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Footer Content</h5>#}
-{#        <p>Here you can use rows and columns here to organize your footer content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>#}
-{##}
-{#      </div>#}
-{#      <!-- Grid column -->#}
-{##}
-{#      <hr class="clearfix w-100 d-md-none">#}
-{##}
-{#      <!-- Grid column -->#}
-{#      <div class="col-md-2 mx-auto">#}
-{##}
-{#        <!-- Links -->#}
-{#        <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>#}
-{##}
-{#        <ul class="list-unstyled">#}
-{#          <li>#}
-{#            <a href="#!">Link 1</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 2</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 3</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 4</a>#}
-{#          </li>#}
-{#        </ul>#}
-{##}
-{#      </div>#}
-{#      <!-- Grid column -->#}
-{##}
-{#      <hr class="clearfix w-100 d-md-none">#}
-{##}
-{#      <!-- Grid column -->#}
-{#      <div class="col-md-2 mx-auto">#}
-{##}
-{#        <!-- Links -->#}
-{#        <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>#}
-{##}
-{#        <ul class="list-unstyled">#}
-{#          <li>#}
-{#            <a href="#!">Link 1</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 2</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 3</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 4</a>#}
-{#          </li>#}
-{#        </ul>#}
-{##}
-{#      </div>#}
-{#      <!-- Grid column -->#}
-{##}
-{#      <hr class="clearfix w-100 d-md-none">#}
-{##}
-{#      <!-- Grid column -->#}
-{#      <div class="col-md-2 mx-auto">#}
-{##}
-{#        <!-- Links -->#}
-{#        <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Links</h5>#}
-{##}
-{#        <ul class="list-unstyled">#}
-{#          <li>#}
-{#            <a href="#!">Link 1</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 2</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 3</a>#}
-{#          </li>#}
-{#          <li>#}
-{#            <a href="#!">Link 4</a>#}
-{#          </li>#}
-{#        </ul>#}
-{##}
-{#      </div>#}
-{#      <!-- Grid column -->#}
-{##}
-{#    </div>#}
-{#    <!-- Grid row -->#}
-{##}
-{#  </div>#}
-{#  <!-- Footer Links -->#}
-{##}
-{#  <hr>#}
-{##}
-{#  <!-- Call to action -->#}
-{#  <ul class="list-unstyled list-inline text-center py-2">#}
-{#    <li class="list-inline-item">#}
-{#      <h5 class="mb-1">Register for free</h5>#}
-{#    </li>#}
-{#    <li class="list-inline-item">#}
-{#      <a href="#!" class="btn btn-danger btn-rounded">Sign up!</a>#}
-{#    </li>#}
-{#  </ul>#}
-{#  <!-- Call to action -->#}
-{##}
-{#  <hr>#}
-{##}
-{#  <!-- Social buttons -->#}
-{#  <ul class="list-unstyled list-inline text-center">#}
-{#    <li class="list-inline-item">#}
-{#      <a class="btn-floating btn-fb mx-1">#}
-{#        <i class="fa fa-facebook"> </i>#}
-{#      </a>#}
-{#    </li>#}
-{#    <li class="list-inline-item">#}
-{#      <a class="btn-floating btn-tw mx-1">#}
-{#        <i class="fa fa-twitter"> </i>#}
-{#      </a>#}
-{#    </li>#}
-{#    <li class="list-inline-item">#}
-{#      <a class="btn-floating btn-gplus mx-1">#}
-{#        <i class="fa fa-google-plus"> </i>#}
-{#      </a>#}
-{#    </li>#}
-{#    <li class="list-inline-item">#}
-{#      <a class="btn-floating btn-li mx-1">#}
-{#        <i class="fa fa-linkedin"> </i>#}
-{#      </a>#}
-{#    </li>#}
-{#    <li class="list-inline-item">#}
-{#      <a class="btn-floating btn-dribbble mx-1">#}
-{#        <i class="fa fa-dribbble"> </i>#}
-{#      </a>#}
-{#    </li>#}
-{#  </ul>#}
-{#  <!-- Social buttons -->#}
-{##}
-{#  <!-- Copyright -->#}
-{#  <div class="footer-copyright text-center py-3">© 2018 Copyright:#}
-{#    <a href="https://mdbootstrap.com/bootstrap-tutorial/"> MDBootstrap.com</a>#}
-{#  </div>#}
-{#  <!-- Copyright -->#}
-{##}
-{#</footer>#}
-{##}
+
 
     <script type="text/javascript" src="../../static/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="../../static/js/popper.min.js"></script>

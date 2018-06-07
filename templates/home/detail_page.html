@@ -1,8 +1,10 @@
 {% extends "home/base.html" %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
-    <div class="container">
+<div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
+    <div class="container" style="">
         <div class="col-xs-8 col-xs-offset-2">
             <img src="{{ post.image.url }}" alt="" class="imgdetail">
 
@@ -26,23 +28,38 @@
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
             {% endif %}
-
+            <hr>
             {% if request.user.is_authenticated %}
                 <form action="." method="POST">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="submit">
+                    {{ form|crispy }}
+                    <input type="submit"class="btn btn-success">
                 </form>
             {% else %}
                 <h2>If you want to add new comments, you must be register</h2>
             {% endif %}
+            <hr>
             <h2>All comments:</h2>
-            {% for comment in comments %}
-                <h3>{{ comment.content }} | {{ comment.user }}</h3>
-                <h4>{{ comment.timestamp|timesince }} ago</h4>
-                <hr>
-            {% endfor %}
+            {% if comments %}
+                {% for comment in comments %}
+                    <h3>{{ comment.content }} | {{ comment.user }}</h3>
+                    <h4>{{ comment.timestamp|timesince }} ago</h4>
+                    <hr>
+                {% endfor %}
+
+            {% else %}
+                <br>
+                <h2 class="alert alert-info">Ops, we haven't comments for this post</h2>
+                <br><br><br><br><br>
+            {% endif %}
+
 
         </div>
     </div>
+</div>
+<style>
+    .asteriskField {
+        display: none;
+    }
+</style>
 {% endblock %}

@@ -9,11 +9,38 @@
             {% else %}
                 <h2>Welcome to {{ user.username }}'s profile!</h2>
             {% endif %}
-            <h3>Username: {{ user.username }}</h3>
-            <h3>Email: {{ user.email }}</h3>
-            <h3>First name: {{ user.first_name }}</h3>
-            <h3>Last name: {{ user.last_name }}</h3>
-            <h4>Registration date: {{ user.date_joined }}</h4>
+            <br>
+            <div class="user_account rounded">
+                <h3>Username: {{ user.username }}</h3>
+                <h3>Email: {{ user.email }}</h3>
+                {% if user.first_name %}
+                    <h3>First name: {{ user.first_name }}</h3>
+                {% else %}
+                    <h3>First name: -</h3>
+                {% endif %}
+                {% if user.last_name %}
+                    <h3>Last name: {{ user.last_name }}</h3>
+                {% else %}
+                    <h3>Last name: -</h3>
+                {% endif %}<h4>Registration date: {{ user.date_joined }}</h4>
+            </div>
+            <br>
+            <a href="{% url "post:home_page" %}" class="btn btn-primary btn-lg">All posts</a>
+            {% if request.user == user %}
+                <a href="{% url "logout_view" %}" class="btn btn-warning btn-lg">Logout</a>
+            {% endif %}
         </div>
     </div>
+
+<style>
+    .user_account{
+        background: linear-gradient(#fdfbfb, #ebedee);
+        border-radius: 100px;
+        border-style: solid;
+        border-width: 5px;
+        border-color: #4c8bf5;
+        padding: 20px;
+    }
+</style>
+
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends "home/base.html" %}
+{% load crispy_forms_tags %}
 
 
 {% block content %}
@@ -6,7 +7,7 @@
         <div class="col-xs-8 col-xs-offset-2">
             <form action="." method="POST">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ form|crispy }}
                 <br>
                 <input type='submit' class='btn btn-default' value='Update'>
             </form>

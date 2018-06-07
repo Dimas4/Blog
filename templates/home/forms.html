@@ -8,7 +8,7 @@
     <form method='POST' action='.'>
         {% csrf_token %}
         {{ form|crispy }}
-        <input type='submit' class='btn btn-success'>
+        <input type='submit' class='btn btn-success' id="alert-target">
     </form>
 </div>
 
@@ -17,5 +17,9 @@
         display: none;
     }
 </style>
-
+<script>
+    $("#alert-target").click(function () {
+        toastr["info"]("Successfully {{ title }}")
+    });
+</script>
 {% endblock content %}
