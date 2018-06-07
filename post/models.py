@@ -24,12 +24,24 @@ def generate_image_path(instance, filename):
     return "{directory}/{file}".format(directory=instance.id//7, file=filename)
 
 
+# def upload_location(instance, filename):
+#     PostModel = instance.__class__
+#     new_id = PostModel.objects.order_by("id").last().id + 1
+#     return "%s/%s" % (new_id, filename)
+
+
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()
 
-    # image = models.ImageField(upload_to=generate_image_path)
+    image = models.ImageField(upload_to='media',
+                              null=True,
+                              blank=True,
+                             )
+
+    # height_field = models.IntegerField(default=0)
+    # width_field = models.IntegerField(default=0)
 
     rate = models.IntegerField(default=0)
     views = models.PositiveIntegerField(default=0)

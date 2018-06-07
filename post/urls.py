@@ -8,6 +8,7 @@ from .views import (
     create_post,
     like_page,
     high_middle_low_rate,
+    dynamic_image
     # high_rate,
     # middle_rate,
     # low_rate
@@ -17,6 +18,7 @@ urlpatterns = [
     path('', home_page, name='home_page'),
     re_path('^rate/(?P<slug>[-\w]+)/$', high_middle_low_rate, name='high_middle_low_rate'),
     path('create/', create_post, name='create_post'),
+    path('show_post_image/', dynamic_image, name='dynamic_image'),
     re_path('^(?P<id>\d+)/$', detail_page, name='detail_page'),
     re_path('^(?P<id>\d+)/like$', like_page, name='like_page'),
     re_path('^(?P<id>\d+)/edit/$', edit_page, name='edit_page'),

@@ -40,8 +40,8 @@ class ChangeForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label='Username')
+    password = forms.CharField(widget=forms.PasswordInput, label='Password')
 
     def clean(self, *args, **kwargs):
         username = self.cleaned_data.get("username")
@@ -58,6 +58,7 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.ModelForm):
+    username = forms.CharField()
     email = forms.EmailField(label='Email address')
     password = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
@@ -71,14 +72,18 @@ class RegisterForm(forms.ModelForm):
             'password2'
         ]
 
-    def clean_password2(self):
+    def clean(self, *args, **kwargs):
         username = self.cleaned_data.get("username")
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
-        if password != password2 or len(password) < 8 or password in [email, username]:
-            raise forms.ValidationError("Error")
+        if password != password2:
+            raise forms.ValidationError("Password don't match")
+        if len(password) < 8:
+            raise forms.ValidationError("Password must me bigger then 8 characters")
+        if password in [email, username]:
+            raise forms.ValidationError("Password equal to email or username")
         email_qs = User.objects.filter(email=email)
         if email_qs.exists():
             raise forms.ValidationError("This email has already exist")
-        return password
+        return super(RegisterForm, self).clean(*args, **kwargs)

@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import F
@@ -9,18 +10,29 @@ import math
 
 from comments.forms import CommentForm
 from comments.models import Comments
+from django.db.models import Count
 from .forms import FormCreateEdit
 from likes.models import Like
 from .models import Posts
 
-
 User = get_user_model()
+
+
+def dynamic_image(request):
+    post_id = request.GET.get("post_id")
+    new_post = Posts.objects.get(id=post_id)
+    data = {
+        'post_image': new_post.image.url
+    }
+    return JsonResponse(data)
 
 
 def home_page(request):
     posts = Posts.objects.all().order_by("-timestamp")
+    popular_posts = Posts.objects.all().order_by('-views')[:5]
     context = {
-        'posts': posts
+        'posts': posts,
+        'popular_posts': popular_posts
     }
     return render(request, "home/home_page.html", context)
 

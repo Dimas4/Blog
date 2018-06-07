@@ -69,7 +69,7 @@ def login_view(request):
         password = form.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
         login(request, user)
-        return redirect("/")
+        return redirect(reverse("post:home_page"))
     return render(request, "home/forms.html", {"form": form, "title": title})
 
 
@@ -83,7 +83,7 @@ def register_view(request):
         user.save()
         new_user = authenticate(username=user.username, password=password)
         login(request, new_user)
-        return redirect("/")
+        return redirect(reverse("post:home_page"))
 
     context = {
         "form": form,
