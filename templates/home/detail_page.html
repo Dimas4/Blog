@@ -4,92 +4,91 @@
 
 {% block content %}
 <div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
-    <div class="container" style="">
-        <div class="col-xs-8 col-xs-offset-2">
-            <img src="{{ post.image.url }}" alt="" class="imgdetail">
+    <div class="container">
 
-            <style>
-                .imgdetail {
-                    width: 400px;
-                }
-            </style>
-            <br>
-            <br>
-            <br>
-            <h2>{{ post.title }}</h2>
-            <h3>{{ post.content }}</h3>
-            <h4>User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
-            <h4>Upload at: {{ post.timestamp|timesince }} ago</h4>
-            {% if request.user == post.user %}
-            <a href="{{ post.edit_post }}" class="btn btn-success">Edit post</a>
-            <a href="{{ post.delete_post }}" class="btn btn-danger">Delete post</a>
-            {% endif %}
+    <section class="text-center my-5">
+      <div class="row">
+        <div class="col-12">
+          <div class="img-back overlay z-depth-2 mb-4 text-center" >
+            <img class="img-fluid imgdetail" src="{{ post.image.url }}" alt="Sample image">
+          </div>
+    {#      <a href="#!" class="pink-text"><h6 class="font-weight-bold mb-3"><i class="fa fa-map pr-2"></i>Adventure</h6></a>#}
+          <h4 class="font-weight-bold mb-3"><strong>{{ post.title }}</strong></h4>
+          <h5>by <a class="font-weight-bold" href="{{ post.get_user_url }}">{{ post.user.username }}</a>, {{ post.timestamp|timesince }} ago</h5>
+          <h5>Article rate: {{ post.rate }} | Views: {{ post.views }}</h5>
+            <h3 class="dark-grey-text">{{ post.content }}</h3>
             <hr>
+            <h4>Total likes: {{ post.total_likes }}</h4>
             {% if not check_like %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary">Like</a>
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
             {% endif %}
             <br><br>
-            <h4>Total likes: {{ post.total_likes }}</h4>
-            <hr>
-            {% if request.user.is_authenticated %}
-                <form action="." method="POST">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <input type="submit"class="btn btn-success">
-                </form>
-            {% else %}
-                <h2>If you want to add new comments, you must be register</h2>
+            {% if request.user == post.user %}
+                <a href="{{ post.edit_post }}" class="btn btn-success">Edit post</a>
+                <a href="{{ post.delete_post }}" class="btn btn-danger">Delete post</a>
             {% endif %}
-            <hr>
-            <h2>All comments:</h2>
-            <br>
-            {% if comments %}
-                {% for comment in comments %}
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="mdb-feed">
-                            <div class="news">
-                              <div class="label">
-                                {% if comment.userprofile.image %}
-                                    <img src="{{ comment.userprofile.image.url }}" class="rounded-circle z-depth-1-half">
-                                {% endif %}
-                              </div>
-                              <div class="excerpt">
-                                <div class="brief">
-                                  <a class="name">{{ comment.user }}</a>
-                                  <div class="date">{{ comment.timestamp|timesince }} ago</div>
-                                </div>
-                                <div class="added-text">{{ comment.content }}</div>
-{#                                <div class="feed-footer">#}
-{#                                  <a class="like">#}
-{#                                    <i class="fa fa-heart"></i>#}
-{#                                    <span>7 likes</span>#}
-{#                                  </a>#}
-{#                                </div>#}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    <br>
-                {% endfor %}
-
-            {% else %}
-                <br>
-                <h2 class="alert alert-info">Ops, we haven't comments for this post</h2>
-            {% endif %}
-
-
-
         </div>
+      </div>
+        <hr>
+    </section>
+
+    {% if request.user.is_authenticated %}
+        <form action="." method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit"class="btn btn-success">
+        </form>
+    {% else %}
+        <h2>If you want to add new comments, you must be register</h2>
+    {% endif %}
+    <hr>
+    <h2>All comments:</h2>
+    <br>
+    {% if comments %}
+        {% for comment in comments %}
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="mdb-feed">
+                    <div class="news">
+                      <div class="label">
+                        {% if comment.userprofile.image %}
+                            <img src="{{ comment.userprofile.image.url }}" class="rounded-circle z-depth-1-half">
+                        {% endif %}
+                      </div>
+                      <div class="excerpt">
+                        <div class="brief">
+                          <a class="name" href="{{ comment.get_user_url }}">{{ comment.user.username }}</a>
+                          <div class="date">{{ comment.timestamp|timesince }} ago</div>
+                        </div>
+                        <div class="added-text">{{ comment.content }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <br>
+        {% endfor %}
+
+    {% else %}
+        <br>
+        <h2 class="alert alert-info">Ops, we haven't comments for this post</h2>
+    {% endif %}
+
     </div>
 </div>
 <style>
-    .asteriskField {
-        display: none;
+    .img-back{
+        background: linear-gradient(#a1c4fd, #c2e9fb);
     }
+    .imgdetail {
+        width: 400px;
+        border-radius: 50px;
+        border-color: #0d5bdd;
+    }
+    .asteriskField {
+            display: none;
+        }
 </style>
 {% endblock %}

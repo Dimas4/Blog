@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from accounts.models import UserProfile
 
@@ -21,6 +22,9 @@ class Comments(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def get_user_url(self):
+        return reverse("accounts:account", kwargs={"id": self.user.id})
 
     def __str__(self):
         return self.content
