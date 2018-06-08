@@ -10,10 +10,12 @@ import math
 
 from comments.forms import CommentForm
 from comments.models import Comments
+from accounts.models import UserProfile
 from django.db.models import Count
 from .forms import FormCreateEdit
 from likes.models import Like
 from .models import Posts
+
 
 User = get_user_model()
 
@@ -49,6 +51,8 @@ def detail_page(request, id):
 
     comments = Comments.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
 
+    user_image = UserProfile.objects.get(user=request.user)
+
     check_like = Posts.is_like(post, request.user)
 
     post.rate = math.ceil(post.likes.count() / (post.views + 1))
@@ -59,6 +63,7 @@ def detail_page(request, id):
     context = {
         'post': post,
         'comments': comments,
+        'user_image':user_image,
         'check_like': check_like,
         'form': form
     }

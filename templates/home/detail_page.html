@@ -20,18 +20,18 @@
             <h3>{{ post.content }}</h3>
             <h4>User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</h4>
             <h4>Upload at: {{ post.timestamp|timesince }} ago</h4>
-            <br>
             {% if request.user == post.user %}
             <a href="{{ post.edit_post }}" class="btn btn-success">Edit post</a>
             <a href="{{ post.delete_post }}" class="btn btn-danger">Delete post</a>
             {% endif %}
             <hr>
-            <h4>Total likes: {{ post.total_likes }}</h4>
             {% if not check_like %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary">Like</a>
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
             {% endif %}
+            <br><br>
+            <h4>Total likes: {{ post.total_likes }}</h4>
             <hr>
             {% if request.user.is_authenticated %}
                 <form action="." method="POST">
@@ -44,18 +44,44 @@
             {% endif %}
             <hr>
             <h2>All comments:</h2>
+            <br>
             {% if comments %}
                 {% for comment in comments %}
-                    <h3>{{ comment.content }} | {{ comment.user }}</h3>
-                    <h4>{{ comment.timestamp|timesince }} ago</h4>
-                    <hr>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="mdb-feed">
+                            <div class="news">
+                              <div class="label">
+                                {% if user_image %}
+                                    <img src="{{ user_image.image.url }}" class="rounded-circle z-depth-1-half">
+                                {% endif %}
+                              </div>
+                              <div class="excerpt">
+                                <div class="brief">
+                                  <a class="name">{{ comment.user }}</a>
+                                  <div class="date">{{ comment.timestamp|timesince }} ago</div>
+                                </div>
+                                <div class="added-text">{{ comment.content }}</div>
+{#                                <div class="feed-footer">#}
+{#                                  <a class="like">#}
+{#                                    <i class="fa fa-heart"></i>#}
+{#                                    <span>7 likes</span>#}
+{#                                  </a>#}
+{#                                </div>#}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <br>
                 {% endfor %}
 
             {% else %}
                 <br>
                 <h2 class="alert alert-info">Ops, we haven't comments for this post</h2>
-                <br><br><br><br><br>
             {% endif %}
+
 
 
         </div>

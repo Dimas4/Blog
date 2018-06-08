@@ -9,11 +9,14 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from .models import UserProfile
+
 from .forms import (
     LoginForm,
     RegisterForm,
     ChangeForm,
-    ChangePassword
+    ChangePassword,
+    UploadImage
     )
 
 
@@ -55,8 +58,22 @@ def account_home(request, id):
     except:
         return HttpResponseRedirect('/')
 
+    form = UploadImage(request.POST or None, request.FILES or None)
+
+    userprofile = UserProfile.objects.get(user=request.user)
+
+    if form.is_valid():
+        if userprofile:
+            userprofile.delete()
+        user_img = form.save(commit=False)
+        user_img.user = request.user
+        user_img.save()
+        return redirect(reverse("accounts:account", kwargs={'id': request.user.id}))
+
     context = {
-        'user': user
+        'user': user,
+        'form': form,
+        'userprofile': userprofile
     }
     return render(request, "home/user_account.html", context)
 
@@ -88,6 +105,7 @@ def register_view(request):
         user.set_password(password)
         user.save()
         new_user = authenticate(username=user.username, password=password)
+        UserProfile.objects.create(user=new_user)
         login(request, new_user)
         return redirect(reverse("post:home_page"))
 

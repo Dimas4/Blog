@@ -6,8 +6,17 @@ from django.contrib.auth import (
     logout,
 )
 
+from .models import UserProfile
 
 User = get_user_model()
+
+
+class UploadImage(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = [
+            'image'
+        ]
 
 
 class ChangePassword(forms.ModelForm):
