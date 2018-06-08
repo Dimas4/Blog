@@ -63,11 +63,8 @@ def account_home(request, id):
     userprofile = UserProfile.objects.get(user=request.user)
 
     if form.is_valid():
-        if userprofile:
-            userprofile.delete()
-        user_img = form.save(commit=False)
-        user_img.user = request.user
-        user_img.save()
+        userprofile.image = form.cleaned_data.get("image")
+        userprofile.save()
         return redirect(reverse("accounts:account", kwargs={'id': request.user.id}))
 
     context = {

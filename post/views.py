@@ -46,7 +46,8 @@ def detail_page(request, id):
     form = CommentForm(request.POST or None)
     if form.is_valid():
         content = form.cleaned_data.get('content')
-        Comments.objects.create(content_type=content_type, object_id=id, user=request.user, content=content)
+        userprofile = UserProfile.objects.get(user=request.user)
+        Comments.objects.create(content_type=content_type, object_id=id, user=request.user, content=content, userprofile=userprofile)
         return HttpResponseRedirect(post.get_absolute_url())
 
     comments = Comments.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
@@ -63,7 +64,7 @@ def detail_page(request, id):
     context = {
         'post': post,
         'comments': comments,
-        'user_image':user_image,
+        'user_image': user_image,
         'check_like': check_like,
         'form': form
     }

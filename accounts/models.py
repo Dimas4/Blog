@@ -7,5 +7,6 @@ class UserProfile(models.Model):
     image = models.ImageField(upload_to='media',
                               null=True,
                               blank=True,
+                              default='media/social.jpg'
                               )
 

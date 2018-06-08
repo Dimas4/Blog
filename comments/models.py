@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
+
+from accounts.models import UserProfile
 
 
 User = get_user_model()
@@ -16,6 +19,8 @@ class Comments(models.Model):
     content_obj = GenericForeignKey('content_type', 'object_id')
 
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.content

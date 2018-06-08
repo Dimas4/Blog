@@ -53,8 +53,8 @@
                           <div class="mdb-feed">
                             <div class="news">
                               <div class="label">
-                                {% if user_image %}
-                                    <img src="{{ user_image.image.url }}" class="rounded-circle z-depth-1-half">
+                                {% if comment.userprofile.image %}
+                                    <img src="{{ comment.userprofile.image.url }}" class="rounded-circle z-depth-1-half">
                                 {% endif %}
                               </div>
                               <div class="excerpt">
