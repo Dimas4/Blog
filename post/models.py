@@ -85,9 +85,9 @@ class Posts(models.Model):
         return reverse("post:delete_page", kwargs={"id": self.id})
 
     def update_view(self, id):
-        self.rate = math.ceil(self.likes.count() / (self.views + 1))
+        self.rate = math.ceil(self.total_likes / (self.views + 1))
         self.views = F('views') + 1
-        self.save()
+        self.save(update_fields=('views',))
         post = Posts.objects.get(id=id)
         return post
 
