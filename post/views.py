@@ -27,7 +27,7 @@ def category_view(request):
 
 
 def category_detail_view(request, slug):
-    posts = Posts.objects.filter(category_name=slug)
+    posts = Posts.objects.filter(category__name=slug)
 
     context = {
         "posts": posts,
