@@ -3,9 +3,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db.models import F
+import math
 
 from likes.models import Like
 from django.db import models
+
+
+def content_type_queryset(model, content_type, id):
+    return model.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
 
 
 class PostManager(models.Manager):
@@ -30,6 +36,18 @@ def generate_image_path(instance, filename):
 #     return "%s/%s" % (new_id, filename)
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    content = models.TextField()
+    image = models.ImageField(upload_to='media',
+                              null=True,
+                              blank=True,
+                              )
+
+    def __str__(self):
+        return self.name
+
+
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
@@ -52,6 +70,8 @@ class Posts(models.Model):
 
     likes = GenericRelation(Like)
 
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.user.id})
 
@@ -63,6 +83,13 @@ class Posts(models.Model):
 
     def delete_post(self):
         return reverse("post:delete_page", kwargs={"id": self.id})
+
+    def update_view(self, id):
+        self.rate = math.ceil(self.likes.count() / (self.views + 1))
+        self.views = F('views') + 1
+        self.save()
+        post = Posts.objects.get(id=id)
+        return post
 
     @property
     def total_likes(self):

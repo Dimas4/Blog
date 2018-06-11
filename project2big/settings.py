@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'accounts',
     'comments',
     'crispy_forms',
+
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

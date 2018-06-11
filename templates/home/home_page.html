@@ -10,17 +10,29 @@
             <div class="col-1"></div>
             <div class="col-8">
             <h2>Choose article's rate</h2>
-            <a href="{% url "post:high_middle_low_rate" slug='high_rate' %}" class="btn blue-gradient btn-rounded">High</a>
-            <a href="{% url "post:high_middle_low_rate" slug='middle_rate' %}" class="btn aqua-gradient btn-rounded">Middle</a>
-            <a href="{% url "post:high_middle_low_rate" slug='low_rate' %}" class="btn blue-gradient btn-rounded">Low</a>
+
+
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{% url "post:high_middle_low_rate" slug='high_rate' %}" class="btn blue-gradient btn-rounded">High</a>
+                <a href="{% url "post:high_middle_low_rate" slug='middle_rate' %}" class="btn aqua-gradient btn-rounded">Middle</a>
+                <a href="{% url "post:high_middle_low_rate" slug='low_rate' %}" class="btn blue-gradient btn-rounded">Low</a>
+            </div>
             <br>
-            {% if request.user.is_staff or request.user.is_superuser %}
+            <hr>
                 <br>
-                <a href="{% url "post:create_post" %}" class="btn btn-success">Add new post</a>
+            {% if request.user.is_staff or request.user.is_superuser %}
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a class="btn btn-primary" href="{% url "post:category_view" %}">Category</a>
+                    <br>
+                    <br>
+                    <a href="{% url "post:create_post" %}" class="btn btn-success">Add new post</a>
+                    <br>
+                </div>
                 <br><br>
+            {% else %}
+                <a class="btn btn-primary" href="{% url "post:category_view" %}">Category</a>
             {% endif %}
             {% if posts %}
-
             <div class="row">
                 {% for post in posts %}
                     {% if forloop.counter0|divisibleby:2 %}
@@ -40,8 +52,7 @@
                               </div>
                               <div class="card-body card-body-cascade text-center">
                                 <h4 class="card-title"><strong><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></strong></h4>
-                                <h6 class="font-weight-bold indigo-text py-2">{{ post.content|truncatechars:20 }}</h6>
-                                <p class="card-text"> User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} | Views: {{ post.views }}</p>
+                                <p class="card-text"> User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} Category: <a href="{% url "post:category_detail_view" slug=post.category.name %}">{{ post.category.name }}</a></p>
                                 <a href="{{ post.get_absolute_url }}" class="btn peach-gradient btn-lg ">Read more</a>
                               </div>
                             </div>

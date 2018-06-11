@@ -5,19 +5,36 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import F
-import math
+
 
 from comments.forms import CommentForm
 from comments.models import Comments
 from accounts.models import UserProfile
-from django.db.models import Count
 from .forms import FormCreateEdit
 from likes.models import Like
-from .models import Posts
+from .models import Posts, Category, content_type_queryset
 
 
 User = get_user_model()
+
+
+def category_view(request):
+    categories = Category.objects.all()
+    context = {
+        "categories": categories
+    }
+    return render(request, "home/category_detail.html", context)
+
+
+def category_detail_view(request, slug):
+    posts = Posts.objects.filter(category__name=slug)
+
+    context = {
+        "posts": posts,
+        "category": slug
+    }
+
+    return render(request, "home/category.html", context)
 
 
 def dynamic_image(request):
@@ -44,27 +61,27 @@ def detail_page(request, id):
     content_type = ContentType.objects.get_for_model(Comments)
 
     form = CommentForm(request.POST or None)
+
     if form.is_valid():
         content = form.cleaned_data.get('content')
         userprofile = UserProfile.objects.get(user=request.user)
-        Comments.objects.create(content_type=content_type, object_id=id, user=request.user, content=content, userprofile=userprofile)
+        Comments.objects.create(content_type=content_type,
+                                object_id=id,
+                                user=request.user,
+                                content=content,
+                                userprofile=userprofile)
+
         return HttpResponseRedirect(post.get_absolute_url())
 
-    comments = Comments.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
-
-    user_image = UserProfile.objects.get(user=request.user)
+    comments = content_type_queryset(model=Comments, content_type=content_type, id=id)
 
     check_like = Posts.is_like(post, request.user)
 
-    post.rate = math.ceil(post.likes.count() / (post.views + 1))
-    post.views = F('views') + 1
-    post.save()
+    post = post.update_view(id)
 
-    post = Posts.objects.get(id=id)
     context = {
         'post': post,
         'comments': comments,
-        'user_image': user_image,
         'check_like': check_like,
         'form': form
     }
@@ -126,12 +143,12 @@ def delete_page(request, id):
     return render(request, "home/delete_page.html", context)
 
 
-def add_delete_like(user, id, model_type, obj, post):
+def add_delete_like(model, user, id, model_type, obj, post):
     if obj.exists():
         obj.delete()
         return HttpResponseRedirect(post.get_absolute_url())
 
-    Like.objects.create(content_type=model_type, object_id=id, user=user)
+    model.objects.create(content_type=model_type, object_id=id, user=user)
     return HttpResponseRedirect(post.get_absolute_url())
 
 
@@ -141,7 +158,7 @@ def like_page(request, id):
     obj = Like.objects.filter(content_type=model_type, object_id=id, user=request.user)
     post = model_type.get_object_for_this_type(id=id)  # or post = Posts.objects.get(id=id)
     user = request.user
-    return add_delete_like(user, id, model_type, obj, post)
+    return add_delete_like(Like, user, id, model_type, obj, post)
 
 
 def high_middle_low_rate(request, slug):

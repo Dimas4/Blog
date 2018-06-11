@@ -9,6 +9,7 @@ class FormCreateEdit(forms.ModelForm):
             "title",
             "content",
             "image",
+            "category"
         ]
 
 
