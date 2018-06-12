@@ -4,10 +4,12 @@ from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models import F
+from django.db import models
 import math
 
+from comments.models import Comments
 from likes.models import Like
-from django.db import models
+
 
 
 def content_type_queryset(model, content_type, id):
@@ -61,16 +63,16 @@ class Posts(models.Model):
     # height_field = models.IntegerField(default=0)
     # width_field = models.IntegerField(default=0)
 
-    rate = models.IntegerField(default=0)
+    rate = models.PositiveSmallIntegerField(default=0)
     views = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now_add=False, auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
     objects = PostManager()
 
     likes = GenericRelation(Like)
-
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.user.id})
