@@ -25,7 +25,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-7 text-left ml-3 mt-3">
-                                            <h4 class="mb-4"><strong>{{ category.name }}</strong></h4>
+                                            <h4 class="mb-4"><strong>{{ category.name }} | Posts count: {{ category.count_posts }}</strong></h4>
                                             <p>{{ category.content|truncatechars:750 }}</p>
                                             <a href="{% url "post:category_detail_view" slug=category.name %}" class="btn btn-success">Posts from this category</a>
                                         </div>

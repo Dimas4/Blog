@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.db.models import Count, Avg
 from django.urls import reverse
 
 
@@ -19,9 +20,9 @@ User = get_user_model()
 
 
 def category_view(request):
-    categories = Category.objects.all()
+    categories = Category.objects.all().annotate(count_posts=Count('posts'))
     context = {
-        "categories": categories
+        "categories": categories,
     }
     return render(request, "home/category_detail.html", context)
 
@@ -48,6 +49,7 @@ def dynamic_image(request):
 
 def home_page(request):
     posts = Posts.objects.select_related("category", "user").all().order_by("-timestamp")
+    # Posts.objects.aggregate(average_views=Avg('views'))
     popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:5]
     context = {
         'posts': posts,
