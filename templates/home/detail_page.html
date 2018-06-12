@@ -16,7 +16,7 @@
           <h4 class="font-weight-bold mb-3"><strong>{{ post.title }}</strong></h4>
           <h5>by <a class="font-weight-bold" href="{{ post.get_user_url }}">{{ post.user.username }}</a>, {{ post.timestamp|timesince }} ago</h5>
           <h5>Article rate: {{ post.rate }} | Views: {{ post.views }}</h5>
-          <h6>Category: {{ post.category }}</h6>
+          <h6>Category: {{ post.category.name }}</h6>
           <hr>
             <h3 class="dark-grey-text">{{ post.content }}</h3>
             <hr>

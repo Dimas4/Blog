@@ -47,8 +47,8 @@ def dynamic_image(request):
 
 
 def home_page(request):
-    posts = Posts.objects.all().order_by("-timestamp")
-    popular_posts = Posts.objects.all().order_by('-views')[:5]
+    posts = Posts.objects.select_related("category", "user").all().order_by("-timestamp")
+    popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:5]
     context = {
         'posts': posts,
         'popular_posts': popular_posts
@@ -57,7 +57,7 @@ def home_page(request):
 
 
 def detail_page(request, id):
-    post = Posts.objects.get(id=id)
+    post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
     form = CommentForm(request.POST or None)
