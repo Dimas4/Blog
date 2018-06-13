@@ -13,6 +13,7 @@ urlpatterns = [
     path('register/', register_view, name='register_view'),
     path('posts/', include(('post.urls', 'post'), namespace='post')),
     path('account/', include(('accounts.urls', 'accounts'), namespace='accounts')),
+    path('chat/', include(('chat_message.urls', 'chat_message'), namespace='chat_message')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

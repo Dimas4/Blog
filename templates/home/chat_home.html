@@ -1,0 +1,40 @@
+{% extends "home/base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<br><br>
+<div class="container">
+    <textarea name="" id="" cols="50" rows="10">
+        {% for message in messages %}
+            <div class="row">
+                <div class="card mb-3 text-center hoverable">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <p>User: {{ message.author }}</p>
+                                <h4 class="mb-4"> {{ message.content }}</h4>
+                                <p>Data: {{ message.data|timesince }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+            </div>
+        {% endfor %}
+    </textarea>
+    <br><br><br>
+    <form action="."method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input class="btn btn-success" type="submit">
+    </form>
+</div>
+
+<style>
+    .asteriskField {
+        display: none;
+    }
+</style>
+
+{% endblock %}
