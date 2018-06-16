@@ -10,3 +10,5 @@ class UserProfile(models.Model):
                               default='media/social.jpg'
                               )
 
+    def __str__(self):
+        return self.user.username

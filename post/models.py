@@ -17,6 +17,18 @@ def content_type_queryset(model, content_type, id):
 
 
 class PostManager(models.Manager):
+    def home(self):
+        res = []
+        posts = self.select_related("category", "user").all().order_by('-timestamp')
+        for p in posts:
+            if len(res) == 0:
+                res.append(p)
+
+            if res[-1].category != p.category:
+                res.append(p)
+
+        return res
+
     def high_rate(self, *args, **kwargs):
         return Posts.objects.filter(rate__range=(25, 101))
 
@@ -75,7 +87,7 @@ class Posts(models.Model):
     likes = GenericRelation(Like)
 
     def get_user_url(self):
-        return reverse("accounts:account", kwargs={"id": self.user.id})
+        return reverse("accounts:account", kwargs={"id": self.user_id})
 
     def get_absolute_url(self):
         return reverse("post:detail_page", kwargs={"id": self.id})

@@ -6,7 +6,7 @@ from django.contrib.auth import (
 
 from django.http import HttpResponseRedirect,Http404
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from .models import UserProfile
@@ -53,14 +53,11 @@ def account_change_profile(request):
 
 
 def account_home(request, id):
-    try:
-        user = User.objects.get(id=id)
-    except:
-        return HttpResponseRedirect('/')
+    user = get_object_or_404(User, id=id)
 
     form = UploadImage(request.POST or None, request.FILES or None)
 
-    userprofile = UserProfile.objects.get(user=request.user)
+    userprofile = get_object_or_404(UserProfile, user=request.user)
 
     if form.is_valid():
         userprofile.image = form.cleaned_data.get("image")

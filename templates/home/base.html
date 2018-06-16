@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="{% static "css/custom_style.css" %}">
     <script type="text/javascript" src="{% static "js/jquery-3.3.1.min.js" %}"></script>
 
+    {% block head %}
+    {% endblock %}
+
 </head>
 <body style="background: linear-gradient(#f5f7fa, #c3cfe2);">
 
@@ -60,12 +63,13 @@
       </div>
     </div>
   </nav>
-<div>
-    <br><br>
-    <div >
-    {% block content %}
-    {% endblock %}
 
+<div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
+    <br><br>
+    {% block content %}
+
+    {% endblock %}
+    <br>
 </div>
 
 

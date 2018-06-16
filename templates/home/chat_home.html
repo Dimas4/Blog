@@ -1,39 +1,72 @@
 {% extends "home/base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "css/chat_css.css" %}">
+    <script type="text/javascript" src="{% static "js/chat_js.js" %}"></script>
+{% endblock %}
 
 
 {% block content %}
-<br><br>
-<div class="container">
-    <textarea name="" id="" cols="50" rows="10">
-        {% for message in messages %}
-            <div class="row">
-                <div class="card mb-3 text-center hoverable">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <p>User: {{ message.author }}</p>
-                                <h4 class="mb-4"> {{ message.content }}</h4>
-                                <p>Data: {{ message.data|timesince }}</p>
-                            </div>
-                        </div>
-                    </div>
+<div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
+    <div class="card rare-wind-gradient chat-room">
+
+    <br>
+    <div class="card-body">
+        <div class="row px-lg-2 px-2">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <h2 class="alert alert-light text-center">Global chat:</h2>
+                <hr>
+                <div class="chat-message">
+                    <ul class="list-unstyled chat-1 scrollbar-light-blue">
+                        {% for message in messages %}
+                            <li class="d-flex justify-content-between mb-4 mr-4">
+                                {% if message.author == request.user %}
+                                    <a href="{{ message.get_user_url }}"><img src="{{ message.author_profile.image.url }}" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1"></a>
+                                {% endif %}
+                                <div class="chat-body white p-3 ml-2 z-depth-1" style="width: 90%">
+                                    <div class="header">
+                                        <a href="{{ message.get_user_url }}">
+                                            <strong class="primary-font">{{ message.author.username }}</strong>
+                                        </a>
+                                    </div>
+                                    <hr class="w-100">
+                                    <p class="mb-0" style="width: 100%">
+                                        {{ message.content }}
+                                    </p>
+                                </div>
+                                {% if message.author != request.user %}
+                                    <img src="{{ message.author_profile.image.url }}" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if request.user.is_authenticated %}
+                        <form action="."  method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <input class="btn btn-success" value="Send" type="submit">
+                        </form>
+                    {% else %}
+                        <hr>
+                        <a href="{% url "login_view" %}" class="btn btn-success">Login</a> <br>
+                        <a href="{% url "register_view" %}" class="btn btn-success">Registration</a>
+                    {% endif %}
                 </div>
-                <br><br>
             </div>
-        {% endfor %}
-    </textarea>
-    <br><br><br>
-    <form action="."method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input class="btn btn-success" type="submit">
-    </form>
+        </div>
+    </div>
+</div>
 </div>
 
 <style>
     .asteriskField {
         display: none;
+    }
+    .textarea{
+        height: 100px;
     }
 </style>
 

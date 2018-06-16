@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Avg
 from django.urls import reverse
 
@@ -40,7 +40,7 @@ def category_detail_view(request, slug):
 
 def dynamic_image(request):
     post_id = request.GET.get("post_id")
-    new_post = Posts.objects.get(id=post_id)
+    new_post = get_object_or_404(Posts, id=post_id)
     data = {
         'post_image': new_post.image.url
     }
@@ -48,7 +48,7 @@ def dynamic_image(request):
 
 
 def home_page(request):
-    posts = Posts.objects.select_related("category", "user").all().order_by("-timestamp")
+    posts = Posts.objects.home()
     # Posts.objects.aggregate(average_views=Avg('views'))
     popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:5]
     context = {
@@ -110,7 +110,7 @@ def create_post(request):
 
 @login_required
 def edit_page(request, id):
-    post = Posts.objects.get(id=id)
+    post = get_object_or_404(Posts, id=id)
     if request.user != post.user:
         raise Http404
 
@@ -131,7 +131,7 @@ def edit_page(request, id):
 
 @login_required
 def delete_page(request, id):
-    post = Posts.objects.get(id=id)
+    post = get_object_or_404(Posts, id=id)
     if request.user != post.user:
         raise Http404
 
