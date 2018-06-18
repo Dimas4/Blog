@@ -21,15 +21,18 @@ from .forms import (
 
 
 def change_password(request):
-    form = ChangePassword(request.POST or None)
-    if form.is_valid():
-        password = form.cleaned_data.get("password")
-        request.user.set_password(password)
-        request.user.save()
-        user = authenticate(username=request.user.username, password=request.user.password)
-        login(request, user)
-        redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
-        return HttpResponseRedirect(redirect_to_profile)
+    if request.POST:
+        form = ChangePassword(request.POST or None)
+        if form.is_valid():
+            password = form.cleaned_data.get("password")
+            request.user.set_password(password)
+            request.user.save()
+            user = authenticate(username=request.user.username, password=request.user.password)
+            login(request, user)
+            redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
+            return HttpResponseRedirect(redirect_to_profile)
+
+    form = ChangePassword()
 
     context = {
         'form': form
@@ -38,13 +41,16 @@ def change_password(request):
 
 
 def account_change_profile(request):
-    form = ChangeForm(request.POST or None)
-    if form.is_valid():
-        request.user.first_name = form.cleaned_data.get('first_name')
-        request.user.last_name = form.cleaned_data.get('last_name')
-        request.user.save()
-        redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
-        return HttpResponseRedirect(redirect_to_profile)
+    if request.POST:
+        form = ChangeForm(request.POST or None)
+        if form.is_valid():
+            request.user.first_name = form.cleaned_data.get('first_name')
+            request.user.last_name = form.cleaned_data.get('last_name')
+            request.user.save()
+            redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
+            return HttpResponseRedirect(redirect_to_profile)
+
+    form = ChangeForm()
 
     context = {
         'form': form
@@ -59,10 +65,16 @@ def account_home(request, id):
 
     userprofile = get_object_or_404(UserProfile, user=request.user)
 
-    if form.is_valid():
-        userprofile.image = form.cleaned_data.get("image")
-        userprofile.save()
-        return redirect(reverse("accounts:account", kwargs={'id': request.user.id}))
+    if request.POST:
+        form = UploadImage(request.POST or None, request.FILES or None)
+
+        if form.is_valid():
+            userprofile.image = form.cleaned_data.get("image")
+            userprofile.save()
+            return redirect(reverse("accounts:account", kwargs={'id': request.user.id}))
+
+    form = UploadImage()
+
 
     context = {
         'user': user,
@@ -77,13 +89,17 @@ def login_view(request):
         return redirect(reverse("post:home_page"))
 
     title = "Login"
-    form = LoginForm(request.POST or None)
-    if form.is_valid():
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get('password')
-        user = authenticate(username=username, password=password)
-        login(request, user)
-        return redirect(reverse("post:home_page"))
+    if request.POST:
+        form = LoginForm(request.POST or None)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect(reverse("post:home_page"))
+
+    form = LoginForm()
+
     return render(request, "home/forms.html", {"form": form, "title": title})
 
 
@@ -92,16 +108,19 @@ def register_view(request):
         return redirect(reverse("post:home_page"))
 
     title = "Registration"
-    form = RegisterForm(request.POST or None)
-    if form.is_valid():
-        user = form.save(commit=False)
-        password = form.cleaned_data.get('password')
-        user.set_password(password)
-        user.save()
-        new_user = authenticate(username=user.username, password=password)
-        UserProfile.objects.create(user=new_user)
-        login(request, new_user)
-        return redirect(reverse("post:home_page"))
+    if request.POST:
+        form = RegisterForm(request.POST or None)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password = form.cleaned_data.get('password')
+            user.set_password(password)
+            user.save()
+            new_user = authenticate(username=user.username, password=password)
+            UserProfile.objects.create(user=new_user)
+            login(request, new_user)
+            return redirect(reverse("post:home_page"))
+
+    form = RegisterForm()
 
     context = {
         "form": form,

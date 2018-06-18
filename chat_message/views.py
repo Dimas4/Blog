@@ -8,15 +8,17 @@ from accounts.models import UserProfile
 def chat_home(request):
     messages = Messages.objects.select_related("author", "author_profile").all()[:15]
 
-    form = SendForm(request.POST or None)
+    form = SendForm()
 
-    if request.POST and form.is_valid():
-        new_form = form.save(commit=False)
-        new_form.author = request.user
-        user_profile = get_object_or_404(UserProfile, user=request.user)
-        new_form.author_profile = user_profile
-        new_form.save()
-        return HttpResponseRedirect(reverse("chat_message:chat_home"))
+    if request.POST:
+        form = SendForm(request.POST or None)
+        if form.is_valid():
+            new_form = form.save(commit=False)
+            new_form.author = request.user
+            user_profile = get_object_or_404(UserProfile, user=request.user)
+            new_form.author_profile = user_profile
+            new_form.save()
+            return HttpResponseRedirect(reverse("chat_message:chat_home"))
 
     context = {
         'messages': messages,

@@ -62,18 +62,21 @@ def detail_page(request, id):
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
-    form = CommentForm(request.POST or None)
+    if request.POST:
+        form = CommentForm(request.POST or None)
 
-    if form.is_valid():
-        content = form.cleaned_data.get('content')
-        userprofile = UserProfile.objects.get(user=request.user)
-        Comments.objects.create(content_type=content_type,
-                                object_id=id,
-                                user=request.user,
-                                content=content,
-                                userprofile=userprofile)
+        if form.is_valid():
+            content = form.cleaned_data.get('content')
+            userprofile = UserProfile.objects.get(user=request.user)
+            Comments.objects.create(content_type=content_type,
+                                    object_id=id,
+                                    user=request.user,
+                                    content=content,
+                                    userprofile=userprofile)
 
-        return HttpResponseRedirect(post.get_absolute_url())
+            return HttpResponseRedirect(post.get_absolute_url())
+
+    form = CommentForm()
 
     comments = content_type_queryset(model=Comments, content_type=content_type, id=id)
 
@@ -93,14 +96,17 @@ def detail_page(request, id):
 
 @login_required
 def create_post(request):
-    form = FormCreateEdit(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        create = form.save(commit=False)
-        create.user = request.user
-        create.title = form.cleaned_data.get("title")
-        create.content = form.cleaned_data.get("content")
-        create.save()
-        return HttpResponseRedirect(create.get_absolute_url())
+    if request.POST:
+        form = FormCreateEdit(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            create = form.save(commit=False)
+            create.user = request.user
+            create.title = form.cleaned_data.get("title")
+            create.content = form.cleaned_data.get("content")
+            create.save()
+            return HttpResponseRedirect(create.get_absolute_url())
+
+    form = FormCreateEdit()
 
     context = {
         'form': form
@@ -114,13 +120,16 @@ def edit_page(request, id):
     if request.user != post.user:
         raise Http404
 
-    form = FormCreateEdit(request.POST or None, instance=post)
-    if form.is_valid():
-        post = form.save(commit=False)
-        post.title = form.cleaned_data.get("title")
-        post.content = form.cleaned_data.get("content")
-        post.save()
-        return HttpResponseRedirect(post.get_absolute_url())
+    if request.POST:
+        form = FormCreateEdit(request.POST or None, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.title = form.cleaned_data.get("title")
+            post.content = form.cleaned_data.get("content")
+            post.save()
+            return HttpResponseRedirect(post.get_absolute_url())
+
+    form = FormCreateEdit()
 
     context = {
         'post': post,
