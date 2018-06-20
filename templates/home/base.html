@@ -46,7 +46,10 @@
                         <a class="dropdown-item" href="{% url "accounts:account" id=request.user.id %}">My account</a>
                         <a class="dropdown-item" href="{% url "accounts:account_change_profile" %}">Edit account</a>
                         <a class="dropdown-item" href="{% url "accounts:change_password" %}">Change password</a>
-                        <a class="dropdown-item" href="{% url "logout_view" %}">Logout</a>
+                        <form action="{% url "logout_view" %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" class="dropdown-item" value="Logout">
+                        </form>
                     </div>
                   </li>
               {% else %}

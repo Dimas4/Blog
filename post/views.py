@@ -11,12 +11,26 @@ from django.urls import reverse
 from comments.forms import CommentForm
 from comments.models import Comments
 from accounts.models import UserProfile
-from .forms import FormCreateEdit
+from .forms import FormCreateEdit, FormTest
 from likes.models import Like
 from .models import Posts, Category, content_type_queryset
+from chat_message.models import Messages
 
 
 User = get_user_model()
+
+
+def test_view(request):
+    form = FormTest(request.user, request.POST)
+    if form.is_valid():
+        form.save(request.user)
+        return HttpResponseRedirect("/posts/")
+
+
+    context = {
+        "form": form
+    }
+    return render(request, "home/test_view.html", context)
 
 
 def category_view(request):
@@ -62,21 +76,19 @@ def detail_page(request, id):
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
-    if request.POST:
-        form = CommentForm(request.POST or None)
+    form = CommentForm(request.POST or None)
 
-        if form.is_valid():
-            content = form.cleaned_data.get('content')
-            userprofile = UserProfile.objects.get(user=request.user)
-            Comments.objects.create(content_type=content_type,
-                                    object_id=id,
-                                    user=request.user,
-                                    content=content,
-                                    userprofile=userprofile)
+    if form.is_valid():
+        content = form.cleaned_data.get('content')
+        userprofile = UserProfile.objects.get(user=request.user)
+        Comments.objects.create(content_type=content_type,
+                                object_id=id,
+                                user=request.user,
+                                content=content,
+                                userprofile=userprofile)
 
-            return HttpResponseRedirect(post.get_absolute_url())
+        return HttpResponseRedirect(post.get_absolute_url())
 
-    form = CommentForm()
 
     comments = content_type_queryset(model=Comments, content_type=content_type, id=id)
 
@@ -96,17 +108,14 @@ def detail_page(request, id):
 
 @login_required
 def create_post(request):
-    if request.POST:
-        form = FormCreateEdit(request.POST or None, request.FILES or None)
-        if form.is_valid():
-            create = form.save(commit=False)
-            create.user = request.user
-            create.title = form.cleaned_data.get("title")
-            create.content = form.cleaned_data.get("content")
-            create.save()
-            return HttpResponseRedirect(create.get_absolute_url())
-
-    form = FormCreateEdit()
+    form = FormCreateEdit(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        create = form.save(commit=False)
+        create.user = request.user
+        create.title = form.cleaned_data.get("title")
+        create.content = form.cleaned_data.get("content")
+        create.save()
+        return HttpResponseRedirect(create.get_absolute_url())
 
     context = {
         'form': form
@@ -120,16 +129,14 @@ def edit_page(request, id):
     if request.user != post.user:
         raise Http404
 
-    if request.POST:
-        form = FormCreateEdit(request.POST or None, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.title = form.cleaned_data.get("title")
-            post.content = form.cleaned_data.get("content")
-            post.save()
-            return HttpResponseRedirect(post.get_absolute_url())
+    form = FormCreateEdit(request.POST or None, instance=post)
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.title = form.cleaned_data.get("title")
+        post.content = form.cleaned_data.get("content")
+        post.save()
+        return HttpResponseRedirect(post.get_absolute_url())
 
-    form = FormCreateEdit()
 
     context = {
         'post': post,

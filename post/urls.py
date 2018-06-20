@@ -10,7 +10,8 @@ from .views import (
     high_middle_low_rate,
     dynamic_image,
     category_view,
-    category_detail_view
+    category_detail_view,
+    test_view
     # high_rate,
     # middle_rate,
     # low_rate
@@ -18,6 +19,7 @@ from .views import (
 
 urlpatterns = [
     path('', home_page, name='home_page'),
+    path('test/', test_view, name='test_view'),
     re_path('^rate/(?P<slug>[-\w]+)/$', high_middle_low_rate, name='high_middle_low_rate'),
     path('category/', category_view, name='category_view'),
     re_path('^category/(?P<slug>[-\w]+)/$', category_detail_view, name='category_detail_view'),

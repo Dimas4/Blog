@@ -1,5 +1,6 @@
 from django import forms
 from .models import Posts
+from accounts.models import UserProfile
 
 
 def is_ethic(title):
@@ -30,3 +31,8 @@ class FormCreateEdit(forms.ModelForm):
             raise forms.ValidationError('Bad worlds in title!')
 
         return super(FormCreateEdit, self).clean(*args, **kwargs)
+
+
+class FormTest(forms.ModelForm):
+    content = forms.CharField(max_length=100)
+

@@ -14,6 +14,9 @@ urlpatterns = [
     path('posts/', include(('post.urls', 'post'), namespace='post')),
     path('account/', include(('accounts.urls', 'accounts'), namespace='accounts')),
     path('chat/', include(('chat_message.urls', 'chat_message'), namespace='chat_message')),
+    path('api-auth/', include('rest_framework.urls')),
+
+    path('api/', include('api.urls'))
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
