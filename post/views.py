@@ -1,9 +1,9 @@
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Avg
 from django.urls import reverse
 
@@ -126,6 +126,7 @@ def create_post(request):
 @login_required
 def edit_page(request, id):
     post = get_object_or_404(Posts, id=id)
+
     if request.user != post.user:
         raise Http404
 

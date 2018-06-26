@@ -14,3 +14,7 @@ class ChatTest(TestCase):
     def test_get_user_url(self):
         message = Messages.objects.get(content="Content")
         self.assertEqual(message.get_user_url(), '/account/1/')
+
+    def test_str(self):
+        message = Messages.objects.get(content="Content")
+        self.assertEqual(message.__str__(), message.content)

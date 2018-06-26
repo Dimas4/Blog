@@ -28,3 +28,10 @@ class CommentsTest(TestCase):
         comment = Comments.objects.get(user=user)
 
         self.assertEqual(comment.get_user_url(), '/account/1/')
+
+    def test_str(self):
+        user = User.objects.get(username="admin")
+
+        comment = Comments.objects.get(user=user)
+
+        self.assertEqual(comment.__str__(), comment.content)

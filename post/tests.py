@@ -1,10 +1,14 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.test import TestCase
-
+from django.urls import reverse
+from django.test import Client
 
 from .models import Posts, Category
 from likes.models import Like
+
+from . import views
 
 
 class PostsTest(TestCase):
@@ -66,3 +70,46 @@ class PostsTest(TestCase):
         self.assertEqual(Posts.objects.low_rate()[1], post_l)
         self.assertEqual(Posts.objects.middle_rate()[0], post_m)
         self.assertEqual(Posts.objects.high_rate()[0], post_h)
+
+    def test_category_str(self):
+        category = Category.objects.get(name="First Category")
+
+        self.assertEqual(category.__str__(), category.name)
+
+    def test_post_str(self):
+        post = Posts.objects.get(title="my title")
+        self.assertEqual(post.__str__(), post.title)
+
+    def test_view_create_page(self):
+        User = get_user_model()
+        User.objects.create_user('admin1', 'admin@gmail.com', 'adminadmin')
+        self.client.login(username='admin1', password='adminadmin')
+        response = self.client.get(reverse('post:create_post'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home/create_page.html')
+
+    def test_view_category_detail(self):
+        category = Category.objects.create(name='test_category', content='test')
+        user = User.objects.get(username="admin", email="admin@mail.ru", password="adminadmin")
+
+        post = Posts.objects.create(user=user, title="my title", content="my content",
+                             rate=5, views=5, category=category)
+
+        response = self.client.get(reverse('post:category_detail_view', kwargs={'slug': 'test_category'}))
+
+        self.assertEqual(response.context['posts'][0], post)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home/category.html')
+
+    def test_view_edit_page(self):
+        User = get_user_model()
+        user = User.objects.create_user('admin1', 'admin@gmail.com', 'adminadmin')
+        self.client.login(username='admin1', password='adminadmin')
+
+        category = Category.objects.create(name='test_category', content='test')
+        post = Posts.objects.create(user=user, title="aaaaamy title", content="my content",
+                                    rate=10, views=10, category=category)
+
+        response = self.client.get(reverse('post:edit_page', kwargs={'id': post.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home/edit_page.html')
