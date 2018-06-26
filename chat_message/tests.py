@@ -5,7 +5,7 @@ from accounts.models import UserProfile
 from .models import Messages
 
 
-class PostsTest(TestCase):
+class ChatTest(TestCase):
     def setUp(self):
         user = User.objects.create(username="admin", email="admin@mail.ru", password="adminadmin")
         user_profile = UserProfile.objects.create(user=user)
