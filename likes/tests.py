@@ -19,7 +19,7 @@ class CommentsTest(TestCase):
         Like.objects.create(content_type=obj_type, object_id=post.id,
                             user=user)
 
-    def test_get_user_url(self):
+    def test_exists(self):
         user = User.objects.get(username="admin")
 
         like = Like.objects.get(user=user)

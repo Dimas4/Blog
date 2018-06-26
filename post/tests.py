@@ -66,21 +66,3 @@ class PostsTest(TestCase):
         self.assertEqual(Posts.objects.low_rate()[1], post_l)
         self.assertEqual(Posts.objects.middle_rate()[0], post_m)
         self.assertEqual(Posts.objects.high_rate()[0], post_h)
-
-
-
-
-
-    # def test_is_liked_true(self):
-    #     obj_type = ContentType.objects.get_for_model(Posts)
-    #     post = Posts.objects.get(title="my title")
-    #     user = User.objects.create(username="admin!!", email="admin@mail.ru", password="adminadmin")
-    #     Like.objects.create(content_type=obj_type, object_id=post.id, user=user)
-    #     self.assertEqual(post.is_like(user), True)
-
-
-
-
-
-
-

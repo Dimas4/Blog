@@ -24,9 +24,6 @@ class PostsDetailSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField(read_only=True)
-    author_profile = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = Messages
         fields = (
@@ -34,7 +31,6 @@ class MessageSerializer(serializers.ModelSerializer):
             'author_profile',
             'content',
         )
-
 
 
 class MessageDetailSerializer(serializers.ModelSerializer):
