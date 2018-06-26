@@ -26,7 +26,6 @@ def test_view(request):
         form.save(request.user)
         return HttpResponseRedirect("/posts/")
 
-
     context = {
         "form": form
     }
@@ -88,7 +87,6 @@ def detail_page(request, id):
                                 userprofile=userprofile)
 
         return HttpResponseRedirect(post.get_absolute_url())
-
 
     comments = content_type_queryset(model=Comments, content_type=content_type, id=id)
 
