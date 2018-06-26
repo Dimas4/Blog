@@ -137,7 +137,6 @@ def edit_page(request, id):
         post.save()
         return HttpResponseRedirect(post.get_absolute_url())
 
-
     context = {
         'post': post,
         'form': form

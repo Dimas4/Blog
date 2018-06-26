@@ -4,7 +4,6 @@ from accounts.models import UserProfile
 from django.urls import reverse
 
 
-
 class Messages(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     author_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)

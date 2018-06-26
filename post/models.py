@@ -11,7 +11,6 @@ from comments.models import Comments
 from likes.models import Like
 
 
-
 def content_type_queryset(model, content_type, id):
     return model.objects.filter(content_type=content_type, object_id=id).order_by("-timestamp")
 
@@ -33,10 +32,10 @@ class PostManager(models.Manager):
         return Posts.objects.filter(rate__range=(25, 101))
 
     def middle_rate(self, *args, **kwargs):
-        return Posts.objects.filter(rate__range=(5, 25))
+        return Posts.objects.filter(rate__range=(10, 25))
 
     def low_rate(self, *args, **kwargs):
-        return Posts.objects.filter(rate__range=(0, 5))
+        return Posts.objects.filter(rate__range=(0, 10))
 
 
 def generate_image_path(instance, filename):
