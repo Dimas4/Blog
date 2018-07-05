@@ -1,14 +1,18 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.db.models import Count, Avg
+from django.core.files import File
 from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
+import mock
 
 from .models import Posts, Category
+from .forms import FormCreateEdit
 from likes.models import Like
 
-from . import views
 
 
 class PostsTest(TestCase):
@@ -173,4 +177,18 @@ class PostsTest(TestCase):
         response = self.client.post(reverse('post:high_middle_low_rate', kwargs={'slug': 'low_rate'}))
         self.assertEqual(response.context['posts'][1], post_l)
 
+    def test_view_category_detail_(self):
+        post = Posts.objects.create(user=self.user, title="my title delete", content="my content",
+                                    rate=50, views=10, category=self.category,
+                                    image=SimpleUploadedFile(name='test_image.jpg', content=open("/home/rootadmin/Downloads/media/download.jpeg", 'rb').read(), content_type='image/jpeg'))
+
+        response = self.client.get(reverse('post:dynamic_image')+'?post_id=1')
+
+        self.assertEqual(response.context['post_image'], post.image.url)
+
+    def test_form(self):
+        form_data = {'title': 'Hi', 'content': 'content', 'category': self.category}
+        form = FormCreateEdit(data=form_data)
+        print(form.errors)
+        self.assertFalse(form.is_valid())
 

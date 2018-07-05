@@ -1,35 +1,22 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
-from django.db.models import Count, Avg
+from django.db.models import Count
 from django.urls import reverse
 
 
 from comments.forms import CommentForm
 from comments.models import Comments
 from accounts.models import UserProfile
-from .forms import FormCreateEdit, FormTest
+from .forms import FormCreateEdit
 from likes.models import Like
 from .models import Posts, Category, content_type_queryset
-from chat_message.models import Messages
 
 
 User = get_user_model()
-
-
-def test_view(request):
-    form = FormTest(request.user, request.POST)
-    if form.is_valid():
-        form.save(request.user)
-        return HttpResponseRedirect("/posts/")
-
-    context = {
-        "form": form
-    }
-    return render(request, "home/test_view.html", context)
 
 
 def category_view(request):
@@ -37,7 +24,7 @@ def category_view(request):
     context = {
         "categories": categories,
     }
-    return render(request, "home/category_detail.html", context)
+    return render(request, "home/category_view.html", context)
 
 
 def category_detail_view(request, slug):
@@ -48,7 +35,7 @@ def category_detail_view(request, slug):
         "category": slug
     }
 
-    return render(request, "home/category.html", context)
+    return render(request, "home/category_detail_view.html", context)
 
 
 def dynamic_image(request):
@@ -75,20 +62,24 @@ def detail_page(request, id):
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
-    form = CommentForm(request.POST or None)
+    if request.POST:
+        form = CommentForm(request.POST)
 
-    if form.is_valid():
-        content = form.cleaned_data.get('content')
-        userprofile = UserProfile.objects.get(user=request.user)
-        Comments.objects.create(content_type=content_type,
-                                object_id=id,
-                                user=request.user,
-                                content=content,
-                                userprofile=userprofile)
+        if form.is_valid():
+            content = form.cleaned_data.get('content')
+            userprofile = UserProfile.objects.get(user=request.user)
+            Comments.objects.create(content_type=content_type,
+                                    object_id=id,
+                                    user=request.user,
+                                    content=content,
+                                    userprofile=userprofile)
 
-        return HttpResponseRedirect(post.get_absolute_url())
+            return HttpResponseRedirect(post.get_absolute_url())
 
-    comments = content_type_queryset(model=Comments, content_type=content_type, id=id)
+    form = CommentForm()
+    comments = content_type_queryset(model=Comments,
+                                     content_type=content_type,
+                                     id=id)
 
     check_like = Posts.is_like(post, request.user)
 
@@ -106,19 +97,22 @@ def detail_page(request, id):
 
 @login_required
 def create_post(request):
-    form = FormCreateEdit(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        create = form.save(commit=False)
-        create.user = request.user
-        create.title = form.cleaned_data.get("title")
-        create.content = form.cleaned_data.get("content")
-        create.save()
-        return HttpResponseRedirect(create.get_absolute_url())
+    if request.POST:
+        form = FormCreateEdit(request.POST, request.FILES or None)
+        if form.is_valid():
+            create = form.save(commit=False)
+            create.user = request.user
+            create.title = form.cleaned_data.get("title")
+            create.content = form.cleaned_data.get("content")
+            create.save()
+            return HttpResponseRedirect(create.get_absolute_url())
+
+    form = FormCreateEdit()
 
     context = {
         'form': form
     }
-    return render(request, "home/create_page.html", context)
+    return render(request, "home/create_post.html", context)
 
 
 @login_required
@@ -128,13 +122,16 @@ def edit_page(request, id):
     if request.user != post.user:
         raise Http404
 
-    form = FormCreateEdit(request.POST or None, instance=post)
-    if form.is_valid():
-        post = form.save(commit=False)
-        post.title = form.cleaned_data.get("title")
-        post.content = form.cleaned_data.get("content")
-        post.save()
-        return HttpResponseRedirect(post.get_absolute_url())
+    if request.POST:
+        form = FormCreateEdit(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.title = form.cleaned_data.get("title")
+            post.content = form.cleaned_data.get("content")
+            post.save()
+            return HttpResponseRedirect(post.get_absolute_url())
+
+    form = FormCreateEdit()
 
     context = {
         'post': post,
@@ -181,13 +178,13 @@ def high_middle_low_rate(request, slug):
     if slug not in ['high_rate', 'middle_rate', 'low_rate']:
         raise Http404
 
-    if slug == 'high_rate':
+    elif slug == 'high_rate':
         posts = Posts.objects.high_rate()
         slug1 = "High"
-    if slug == 'middle_rate':
+    elif slug == 'middle_rate':
         posts = Posts.objects.middle_rate()
         slug1 = "Middle"
-    if slug == 'low_rate':
+    elif slug == 'low_rate':
         posts = Posts.objects.low_rate()
         slug1 = "Low"
 

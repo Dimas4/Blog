@@ -29,13 +29,13 @@ class PostManager(models.Manager):
         return res
 
     def high_rate(self, *args, **kwargs):
-        return Posts.objects.filter(rate__range=(25, 101))
+        return self.filter(rate__range=(25, 101))
 
     def middle_rate(self, *args, **kwargs):
-        return Posts.objects.filter(rate__range=(10, 25))
+        return self.filter(rate__range=(10, 25))
 
     def low_rate(self, *args, **kwargs):
-        return Posts.objects.filter(rate__range=(0, 10))
+        return self.filter(rate__range=(0, 10))
 
 
 def generate_image_path(instance, filename):
@@ -69,7 +69,7 @@ class Posts(models.Model):
     image = models.ImageField(upload_to='media',
                               null=True,
                               blank=True,
-                             )
+                              )
 
     # height_field = models.IntegerField(default=0)
     # width_field = models.IntegerField(default=0)

@@ -1,10 +1,9 @@
 from django import forms
 from .models import Posts
-from accounts.models import UserProfile
 
 
 def is_ethic(title):
-    bad_world = ['!!!']
+    bad_world = ['']
     for i in bad_world:
         if i in title:
             return True
@@ -28,11 +27,6 @@ class FormCreateEdit(forms.ModelForm):
         
         title = self.cleaned_data['title']
         if is_ethic(title):
-            raise forms.ValidationError('Bad worlds in title!')
+            raise forms.ValidationError('Bad words in the title!')
 
         return super(FormCreateEdit, self).clean(*args, **kwargs)
-
-
-class FormTest(forms.ModelForm):
-    content = forms.CharField(max_length=100)
-

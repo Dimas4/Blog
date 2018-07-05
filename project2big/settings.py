@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'api',
     'start',
     'post',
     'likes',
@@ -46,8 +47,7 @@ INSTALLED_APPS = [
     'comments',
     'crispy_forms',
     'chat_message',
-    'rest_framework',
-    'api'
+    'rest_framework'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

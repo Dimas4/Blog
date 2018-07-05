@@ -4,9 +4,9 @@ from django.contrib.auth import (
     logout,
     )
 
-from django.http import HttpResponseRedirect,Http404
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 from django.urls import reverse
 
 from .models import UserProfile
@@ -21,76 +21,76 @@ from .forms import (
 
 
 def change_password(request):
+    form = ChangePassword()
+
     if request.POST:
-        form = ChangePassword(request.POST or None)
+        form = ChangePassword(request.POST)
         if form.is_valid():
             password = form.cleaned_data.get("password")
             request.user.set_password(password)
             request.user.save()
             user = authenticate(username=request.user.username, password=request.user.password)
             login(request, user)
+
             redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
             return HttpResponseRedirect(redirect_to_profile)
-
-    form = ChangePassword()
 
     context = {
         'form': form
     }
-    return render(request, "home/change_password.html", context)
+    return render(request, "accounts/change_password.html", context)
 
 
 def account_change_profile(request):
+    form = ChangeForm()
+
     if request.POST:
-        form = ChangeForm(request.POST or None)
+        form = ChangeForm(request.POST)
         if form.is_valid():
             request.user.first_name = form.cleaned_data.get('first_name')
             request.user.last_name = form.cleaned_data.get('last_name')
             request.user.save()
+
             redirect_to_profile = reverse("accounts:account", kwargs={"id": request.user.id})
             return HttpResponseRedirect(redirect_to_profile)
-
-    form = ChangeForm()
 
     context = {
         'form': form
     }
-    return render(request, "home/change_profile.html", context)
+    return render(request, "accounts/change_profile.html", context)
 
 
 def account_home(request, id):
     user = get_object_or_404(User, id=id)
 
-    form = UploadImage(request.POST or None, request.FILES or None)
-
     userprofile = get_object_or_404(UserProfile, user=request.user)
+    form = UploadImage()
 
     if request.POST:
-        form = UploadImage(request.POST or None, request.FILES or None)
+        form = UploadImage(request.POST, request.FILES or None)
 
         if form.is_valid():
             userprofile.image = form.cleaned_data.get("image")
             userprofile.save()
-            return redirect(reverse("accounts:account", kwargs={'id': request.user.id}))
-
-    form = UploadImage()
-
+            return HttpResponseRedirect(userprofile.get_user_url())
 
     context = {
         'user': user,
         'form': form,
         'userprofile': userprofile
     }
-    return render(request, "home/user_account.html", context)
+    return render(request, "accounts/user_account.html", context)
 
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(reverse("post:home_page"))
 
+    form = LoginForm()
+
     title = "Login"
     if request.POST:
-        form = LoginForm(request.POST or None)
+        form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get('password')
@@ -98,9 +98,12 @@ def login_view(request):
             login(request, user)
             return redirect(reverse("post:home_page"))
 
-    form = LoginForm()
+    context = {
+        "form": form,
+        "title": title
+    }
 
-    return render(request, "home/forms.html", {"form": form, "title": title})
+    return render(request, "accounts/login_register_forms.html", context)
 
 
 def register_view(request):
@@ -108,8 +111,10 @@ def register_view(request):
         return redirect(reverse("post:home_page"))
 
     title = "Registration"
+    form = RegisterForm()
+
     if request.POST:
-        form = RegisterForm(request.POST or None)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data.get('password')
@@ -120,14 +125,13 @@ def register_view(request):
             login(request, new_user)
             return redirect(reverse("post:home_page"))
 
-    form = RegisterForm()
 
     context = {
         "form": form,
         'title': title
     }
 
-    return render(request, "home/forms.html", context)
+    return render(request, "accounts/login_register_forms.html", context)
 
 
 def logout_view(request):
