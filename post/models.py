@@ -7,6 +7,8 @@ from django.db import models
 
 import math
 
+from rest_framework.reverse import reverse as api_reverse
+
 from comments.models import Comments
 from likes.models import Like
 
@@ -122,6 +124,9 @@ class Posts(models.Model):
         obj_type = ContentType.objects.get_for_model(self)
         likes = Like.objects.filter(content_type=obj_type, object_id=self.id, user=user)
         return likes.exists()
+
+    def get_api_url(self, request=None):
+        return api_reverse("post-api:detail", kwargs={"pk": self.pk}, request=request)
 
     def __str__(self):
         return self.title

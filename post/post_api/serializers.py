@@ -4,23 +4,22 @@ from post.models import Posts
 
 
 class PostsCreateSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Posts
-        fields = (
+        fields = [
+            'url',
             'title',
             'content',
             'category',
-            'image'
-        )
+            'image',
+        ]
+        read_only_fields = ['url']
 
-
-class PostsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Posts
-        fields = (
-            'title',
-            'content'
-        )
+    def get_url(self, obj):
+        request = self.context.get("request")
+        return obj.get_api_url(request=request)
 
 
 class PostsDetailSerializer(serializers.ModelSerializer):
@@ -32,3 +31,4 @@ class PostsDetailSerializer(serializers.ModelSerializer):
             'rate',
             'views'
         )
+        read_only_fields = ['rate', 'views']

@@ -36,18 +36,11 @@ class PostListAPIView(mixins.CreateModelMixin,
     #     return {"request": self.request}
 
 
-class PostDetailAPIView(mixins.RetrieveModelMixin,
-                        mixins.UpdateModelMixin,
-                        mixins.DestroyModelMixin,
-                        generics.GenericAPIView):
-    queryset = Posts.objects.all()
+class PostDetailRUDApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostsDetailSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+    def get_queryset(self):
+        return Posts.objects.all()
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+    def get_serializer_context(self, *args, **kwargs):
+        return {"request": self.request}
