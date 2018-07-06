@@ -9,32 +9,42 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()
+    email = serializers.EmailField(required=True)
+    password2 = serializers.CharField(required=True)
+
+    def validate(self, data):
+        username = data['username']
+        email = data['email']
+        password = data['password']
+        password2 = data['password2']
+
+        check_email = User.objects.filter(email=email)
+        if check_email.exists():
+            raise serializers.ValidationError({'username': [
+                "A user with that username already exists."
+            ]})
+
+        check_username = User.objects.filter(username=username)
+        if check_username.exists():
+            raise serializers.ValidationError({'email': [
+                "A user is already registered with this e-mail address."
+            ]})
+
+        if password != password2 or len(password) < 8:
+            raise serializers.ValidationError({"non_field_errors": [
+                "The two password fields didn't match or password len less then 8 characters!"
+            ]})
+
+        return data
 
     class Meta:
         model = User
         fields = [
             'username',
-            'password',
             'email',
+            'password',
+            'password2',
         ]
         extra_kwargs = {"password":
                         {"write_only": True}
                         }
-
-        def validate_email(self, value):
-            data = self.get_initial()
-            email1 = data.get("email")
-            check_email = User.objects.filter(email=email1)
-            if check_email.exists():
-                raise serializers.ValidationError("This user has already registered!")
-            return value
-
-        def create(self, validate_data):
-            username = validate_data['username']
-            email = validate_data['email']
-            password = validate_data['password']
-            new_user = User(username=username, email=email)
-            new_user.set_password(password)
-            new_user.save()
-            return validate_data

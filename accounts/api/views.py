@@ -1,71 +1,28 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 
 from rest_framework.authtoken.models import Token
-from rest_framework import generics
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from .serializers import UserCreateSerializer
 
-#
-# class UserCreateAPIView(CreateAPIView):
-#     serializer_class = UserCreateSerializer
-#     queryset = User.objects.all()
 
-
-class Register(generics.CreateAPIView):
-    serializer_class = UserCreateSerializer
+class Register(APIView):
 
     def post(self, request, *args, **kwargs):
+        serializer = UserCreateSerializer(data=request.data)
 
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
+        if serializer.is_valid():
+            username = serializer.data.get('username')
+            email = serializer.data.get('email')
+            password = serializer.data.get('password')
 
-        user = User.objects.create_user(username=username,
-                                        email=email,
-                                        password=password,
-                                        first_name=first_name,
-                                        last_name=last_name
-                                        )
+            user = User.objects.create_user(username, email, password)
+            token = Token.objects.create(user=user)
 
-        token = Token.objects.create(user=user)
+            context = {
+                'key': token.key
+            }
 
-        return HttpResponse({'detail': token.key})
+            return Response(context)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return Response(data=serializer.errors)
