@@ -7,13 +7,12 @@ from django.http import JsonResponse
 from django.db.models import Count
 from django.urls import reverse
 
-
+from .models import Posts, Category, content_type_queryset
+from accounts.models import UserProfile
 from comments.forms import CommentForm
 from comments.models import Comments
-from accounts.models import UserProfile
 from .forms import FormCreateEdit
 from likes.models import Like
-from .models import Posts, Category, content_type_queryset
 
 
 User = get_user_model()

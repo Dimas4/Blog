@@ -2,9 +2,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from .models import Comments
 from post.models import Posts, Category
 from accounts.models import UserProfile
+from .models import Comments
 
 
 class CommentsTest(TestCase):

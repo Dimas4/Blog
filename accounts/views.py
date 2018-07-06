@@ -3,14 +3,12 @@ from django.contrib.auth import (
     login,
     logout,
     )
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.urls import reverse
 
 from .models import UserProfile
-
 from .forms import (
     LoginForm,
     RegisterForm,
@@ -124,7 +122,6 @@ def register_view(request):
             UserProfile.objects.create(user=new_user)
             login(request, new_user)
             return redirect(reverse("post:home_page"))
-
 
     context = {
         "form": form,

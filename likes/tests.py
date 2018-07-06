@@ -2,8 +2,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from .models import Like
 from post.models import Posts, Category
+from .models import Like
 
 
 class CommentsTest(TestCase):

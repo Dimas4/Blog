@@ -12,6 +12,7 @@ from .views import (
     category_detail_view,
     )
 
+
 urlpatterns = [
     path('', home_page, name='home_page'),
     re_path('^rate/(?P<slug>[-\w]+)/$', high_middle_low_rate, name='high_middle_low_rate'),

@@ -1,10 +1,10 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db.models import F
 from django.db import models
+
 import math
 
 from comments.models import Comments
