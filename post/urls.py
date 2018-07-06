@@ -12,6 +12,7 @@ from .views import (
     category_detail_view,
     )
 
+app_name = 'post-api'
 
 urlpatterns = [
     path('', home_page, name='home_page'),

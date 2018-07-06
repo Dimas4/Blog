@@ -11,6 +11,10 @@ class UserProfile(models.Model):
                               default='media/social.jpg'
                               )
 
+    class Meta:
+        verbose_name = 'UserProfile'
+        verbose_name_plural = 'UserProfiles'
+
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.user_id})
 

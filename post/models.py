@@ -57,6 +57,10 @@ class Category(models.Model):
                               blank=True,
                               )
 
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+
     def __str__(self):
         return self.name
 
@@ -84,6 +88,10 @@ class Posts(models.Model):
     objects = PostManager()
 
     likes = GenericRelation(Like)
+
+    class Meta:
+        verbose_name = 'Posts'
+        verbose_name_plural = 'Post'
 
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.user_id})

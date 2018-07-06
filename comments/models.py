@@ -22,6 +22,10 @@ class Comments(models.Model):
 
     userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
+
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.user.id})
 

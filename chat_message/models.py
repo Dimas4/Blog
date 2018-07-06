@@ -11,6 +11,10 @@ class Messages(models.Model):
     content = models.TextField()
     data = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'Message'
+        verbose_name_plural = 'Messages'
+
     def get_user_url(self):
         return reverse("accounts:account", kwargs={"id": self.author_id})
 

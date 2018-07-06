@@ -13,5 +13,9 @@ class Like(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    class Meta:
+        verbose_name = 'Like'
+        verbose_name_plural = 'Likes'
+
     def __str__(self):
         return self.user.username
