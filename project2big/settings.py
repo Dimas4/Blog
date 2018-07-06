@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
 
     'start',
     'post',
@@ -46,7 +48,13 @@ INSTALLED_APPS = [
     'comments',
     'crispy_forms',
     'chat_message',
-    'rest_framework'
+
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
