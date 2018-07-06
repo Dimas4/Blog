@@ -1,0 +1,99 @@
+.asteriskField {
+    display: none;
+}
+
+.user_div{
+    background: linear-gradient(#f5f7fa, #c3cfe2);
+}
+
+.user_account{
+        background: linear-gradient(#fdfbfb, #ebedee);
+        border-radius: 100px;
+        border-style: solid;
+        border-width: 5px;
+        border-color: #4c8bf5;
+        padding: 20px;
+    }
+
+.profileimg {
+    width: 300px;
+}
+
+.chat_div{
+    width: 90%
+}
+
+.chat_p{
+    width: 100%
+}
+
+.textarea{
+    height: 100px;
+}
+
+.category_div{
+    margin-bottom: 20px;
+}
+
+.post-choose{
+        height: 10%;
+}
+
+.img-back{
+    background: linear-gradient(#a1c4fd, #c2e9fb);
+}
+
+.imgdetail {
+    width: 400px;
+    border-radius: 50px;
+    border-color: #0d5bdd;
+}
+
+.form-control{
+    display: inline-block!important;
+}
+
+.home_div{
+    margin-right: 140px;
+    margin-bottom: 10px;
+}
+
+.home_div_bot{
+    margin-left: 100px;
+}
+
+.imgcls {
+    width: 300px;
+}
+
+.ImgAddAjax{
+    width: 220px;
+    height: 220px;
+}
+
+.ImgAjax{
+    height: 220px;
+}
+
+.card{
+    width: 300px;
+}
+
+.width_card{
+    height: 500px;
+}
+
+.home_h4{
+    list-style-type:none
+}
+
+.start_div{
+    background-image: url('https://i.ytimg.com/vi/MtCMtC50gwY/maxresdefault.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.view_cat{
+    margin-bottom: 20px;
+}

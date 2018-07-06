@@ -3,7 +3,7 @@
 
 {% block content %}
     <br><br>
-    <div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
+    <div class="user_div">
     <div class="container-fluid">
 
         <div class="row">
@@ -38,7 +38,7 @@
                     {% if forloop.counter0|divisibleby:2 %}
                         </div><br><br><div class="row">
                     {% endif %}
-                        <div class="col-xs-6 col-lg-3" style="margin-right: 140px; margin-bottom: 10px;">
+                        <div class="home_div col-xs-6 col-lg-3">
                             <div class="card card-cascade width_card">
                               <div class="view view-cascade overlay">
                                   {% if post.image %}
@@ -64,7 +64,7 @@
         </div>
         <div class="row">
             <div class="col-xs-1"></div>
-            <div class="col-xs-1" style="margin-left: 100px;">
+            <div class="home_div_bot col-xs-1">
                 <h2>5 popular news:</h2>
                 {% for popular_post in popular_posts %}
                     <img src="{{ popular_post.image.url }}" alt="" class="img-responsive ImgAddAjax rounded">
@@ -77,30 +77,12 @@
     </div>
         </div>
 
-<style>
-    .imgcls {
-        width: 300px;
-    }
-    .ImgAddAjax{
-        width: 220px;
-        height: 220px;
-    }
-    .ImgAjax{
-        height: 220px;
-    }
-    .card{
-        width: 300px;
-    }
-    .width_card{
-        height: 500px;
-    }
-</style>
         <hr>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-1"></div>
-        <div class="col-xs-5" style="margin-left: 100px">
+        <div class="home_div_bot col-xs-5">
             <h2>Our best posts: </h2>
             <br>
             <div class="row">
@@ -112,7 +94,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     {% for popular_post in popular_posts %}
-                            <h4 style="list-style-type:none "><a href="{{ popular_post.get_absolute_url }}" class="post" data-id="{{ popular_post.id }}">{{ popular_post.title }}</a></h4>
+                            <h4 class="home_h4"><a href="{{ popular_post.get_absolute_url }}" class="post" data-id="{{ popular_post.id }}">{{ popular_post.title }}</a></h4>
                     {% endfor %}
                 </div>
             </div>

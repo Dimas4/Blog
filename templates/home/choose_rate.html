@@ -3,7 +3,7 @@
 
 {% block content %}
 <br><br>
-<div style="background: linear-gradient(#f5f7fa, #c3cfe2);">
+<div class="user_div">
     <div class="container">
         <div class="row">
             <div class="col-10 col-xs-offset-2">
@@ -18,7 +18,7 @@
                         {% if forloop.counter0|divisibleby:3 %}
                             </div><br><br><div class="row">
                         {% endif %}
-                            <div class="col-xs-12 col-sm-6 col-md-4 post-choose" style="margin-bottom: 20px;">
+                            <div class="view_cat col-xs-12 col-sm-6 col-md-4 post-choose">
                                 <div class="card card-cascade width_card">
                                   <div class="view view-cascade overlay">
                                       {% if post.image %}
@@ -48,9 +48,5 @@
         </div>
         </div>
     </div>
-<style>
-    .post-choose{
-        height: 10%;
-    }
-</style>
+
 {% endblock %}
