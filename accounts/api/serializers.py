@@ -23,7 +23,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'username': [
                 "A user with that username already exists."
             ]})
-            
+
         check_email = User.objects.filter(email=email)
         if check_email.exists():
             raise serializers.ValidationError({'email': [

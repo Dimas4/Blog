@@ -1,10 +1,11 @@
-from rest_framework.test import RequestsClient
 from django.contrib.auth.models import User
+
+from rest_framework.test import RequestsClient
 from rest_framework.test import APITestCase
 
+from chat_message.models import Messages
 from post.models import Posts, Category
 from accounts.models import UserProfile
-from chat_message.models import Messages
 
 
 class ApiTest(APITestCase):
@@ -21,7 +22,6 @@ class ApiTest(APITestCase):
         response = client.get('http://127.0.0.1:8000/api/posts/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(response.json()), "[{'title': 'my title', 'content': 'my content'}]")
 
     def test_get_posts_detail(self):
         client = RequestsClient()
@@ -31,24 +31,28 @@ class ApiTest(APITestCase):
         self.assertEqual(str(response.json()), "{'title': 'my title', 'content': 'my content',"
                                                " 'rate': 5, 'views': 5}")
 
-    def test_get_messages_all(self):
+    # def test_post_post(self):
+    #     client = RequestsClient()
+    #     user = User.objects.get(username="admin")
+    #     category = Category.objects.get(name="First Category")
+    #
+    #     self.client.login(username='admin', password='adminadmin')
+    #     post = self.client.post('http://127.0.0.1:8000/api/posts/', {'user': user, 'title': 'my title',
+    #                                                                  'content': 'my content', 'category': category})
+    #     print(post)
+    #     response = client.get('http://127.0.0.1:8000/api/posts/2')
+    #
+    #     self.assertEqual(response.status_code, 200)
+
+    def test_post_delete(self):
         client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/messages/')
+        response = client.delete('http://127.0.0.1:8000/api/posts/1')
+        response = client.delete('http://127.0.0.1:8000/api/posts/1')
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(response.json()), "[{'author': 1, 'author_profile': 1, 'content': 'Message'}]")
-
-    def test_get_messages_detail(self):
-        client = RequestsClient()
-        response = client.get('http://127.0.0.1:8000/api/messages/1/')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(response.json()), "{'content': 'Message'}")
+        self.assertEqual(response.status_code, 404)
 
     def test_post_posts(self):
         url = '/login/'
         data = {'username': 'admin', 'password': 'adminadmin'}
         response = self.client.post(url, data, format='json')
-
         self.assertEqual(response.status_code, 200)
-
