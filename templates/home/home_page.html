@@ -32,6 +32,11 @@
             {% else %}
                 <a class="btn btn-primary" href="{% url "post:category_view" %}">Category</a>
             {% endif %}
+
+
+
+
+
             {% if posts %}
             <div class="row">
                 {% for post in posts %}
@@ -102,7 +107,6 @@
     </div>
 </div>
 </div>
-
     <script>
         $(document).ready(function(){
             $('.post').on('mouseenter', function () {
@@ -111,14 +115,12 @@
                 data = {
                     post_id: post_id
                 };
-                {#http://127.0.0.1:8000/media/0/4 #}
                 $.ajax({
                     type: "GET",
                     url: '{% url "post:dynamic_image" %}',
                     data: data,
                     dataType: "json",
                     success: function (data) {
-                        console.log(data);
                         $('#post-image').html('<img class="ImgAjax rounded" src="http://127.0.0.1:8000'+data.post_image+'">')
                     }
                 })
@@ -126,4 +128,5 @@
             })
         });
     </script>
+
 {% endblock %}

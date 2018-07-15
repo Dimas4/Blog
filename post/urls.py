@@ -10,12 +10,16 @@ from .views import (
     dynamic_image,
     category_view,
     category_detail_view,
+    add_comment,
+    display_posts_by_category
     )
 
 app_name = 'post-api'
 
 urlpatterns = [
     path('', home_page, name='home_page'),
+    path('add_comment/', add_comment, name='add_comment'),
+    path('display_posts_by_category', display_posts_by_category, name='display_posts_by_category'),
     re_path('^rate/(?P<slug>[-\w]+)/$', high_middle_low_rate, name='high_middle_low_rate'),
     path('category/', category_view, name='category_view'),
     re_path('^category/(?P<slug>[-\w]+)/$', category_detail_view, name='category_detail_view'),

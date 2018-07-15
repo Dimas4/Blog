@@ -46,34 +46,56 @@ def dynamic_image(request):
     return JsonResponse(data)
 
 
+def display_posts_by_category(request):
+    category = request.GET.get('category_name')
+    posts = list(Posts.objects.filter(category__name=category).values('id', 'title', 'image').order_by('-timestamp'))
+    data = {
+        'posts': posts,
+    }
+    return JsonResponse(data)
+
+
 def home_page(request):
     posts = Posts.objects.home()
+    path = request.build_absolute_uri('/').strip("/")
     # Posts.objects.aggregate(average_views=Avg('views'))
     popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:5]
+    categories = Category.objects.all()[:5]
+    path = request.build_absolute_uri('/').strip("/")
     context = {
         'posts': posts,
-        'popular_posts': popular_posts
+        'categories': categories,
+        'popular_posts': popular_posts,
+        'path': path
     }
     return render(request, "home/home_page.html", context)
+
+
+def add_comment(request):
+    content_type = ContentType.objects.get_for_model(Comments)
+    post_id = request.POST.get('post_id')
+    comment = request.POST.get('comment')
+    userprofile = UserProfile.objects.get(user=request.user)
+    new_comment = Comments.objects.create(content_type=content_type,
+                                          object_id=post_id,
+                                          user=request.user,
+                                          content=comment,
+                                          userprofile=userprofile)
+
+    comment = [{
+        'author': new_comment.user.username,
+        'comment': new_comment.content,
+        'timestamp': new_comment.timestamp.strftime('%Y-%m-%d'),
+        'author_image': userprofile.image.url,
+        'author_id': new_comment.user.id
+    }]
+
+    return JsonResponse(comment, safe=False)
 
 
 def detail_page(request, id):
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
-
-    if request.POST:
-        form = CommentForm(request.POST)
-
-        if form.is_valid():
-            content = form.cleaned_data.get('content')
-            userprofile = UserProfile.objects.get(user=request.user)
-            Comments.objects.create(content_type=content_type,
-                                    object_id=id,
-                                    user=request.user,
-                                    content=content,
-                                    userprofile=userprofile)
-
-            return HttpResponseRedirect(post.get_absolute_url())
 
     form = CommentForm()
     comments = content_type_queryset(model=Comments,

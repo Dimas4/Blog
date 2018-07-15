@@ -2,45 +2,90 @@
 
 
 {% block content %}
+
+
 <br><br>
 <div class="user_div">
     <div class="container">
         <div class="col-xs-10 col-xs-offset-2">
             <div class="row">
-                <div class="container">
+            <div class="container">
                 <h2 class="btn btn-default btn-lg btn-block">{{ category }} category</h2>
-                <hr>
-                {% if categories %}
+                <br>
+                <ul class="nav nav-tabs" role="tablist" style="margin-left: -1px;">
                     {% for category in categories %}
-                        <section class="my-5">
-                          <div class="row">
-                            <div class="col-lg-5">
-                              <div class="view overlay rounded z-depth-2 mb-lg-0 mb-4">
-                                {% if category.image %}
-                                <img class="profileimg text-center img-fluid" src="{{ category.image.url }}" alt="Sample image">
-                                {% endif %}
-                                  <a>
-                                  <div class="mask rgba-white-slight"></div>
-                                </a>
-                              </div>
-                            </div>
-                            <div class="col-lg-7">
-                              <h3 class="font-weight-bold mb-3"><strong>{{ category.name }} | Posts count: {{ category.count_posts }}</strong></h3>
-                              <p>{{ category.content|truncatechars:750 }}</p>
-                              <a href="{% url "post:category_detail_view" slug=category.name %}" class="btn btn-success"><i class="fa fa-clone left"></i>Posts from this category</a>
-                            </div>
-                          </div>
-                        </section>
-                    {% endfor %}
-                {% else %}
-                    <h3 class="alert alert-info text-center">Ops, we haven't categories</h3>
-                {% endif %}
+                     {% if forloop.first %}
+                      <li role="presentation" class="active">
+                        <a class="nav-link category"  data-name="{{ category.name }}" role="tab" data-toggle="tab" href="#{{ category.name }}" role="tab" aria-controls="{{ category.name }}" aria-selected="true">{{ category.name }}</a>
+                      </li>
+                      {% else %}
+                      <li role="presentation">
+                        <a class="nav-link category" data-name="{{ category.name }}" data-toggle="tab" href="#{{ category.name }}" role="tab" aria-controls="{{ category.name }}" aria-selected="false">{{ category.name }}</a>
+                      </li>
+                    </ul>
+                    {% endif %}
+                 {% endfor %}
+
+                <div class="show_post_by_category" id="show_post">
+
+                </div>
             </div>
 
+
             </div>
+
 
         </div>
         </div>
     </div>
+<script>
+        $(document).ready(function () {
+            $('.category').on('click', function () {
+                var category_name = $(this).attr('data-name');
 
+                data = {
+                    category_name: category_name
+                };
+
+                $('.show_post_by_category').html('');
+
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'post:display_posts_by_category' %}",
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        $.each(data, function(field){
+                            for(var i=0; i <= field.length; i++){
+                                var url_mask = "{% url "post:category_detail_view" slug='123' %}".replace(/123/, category_name);
+                                var url_mask_id = "{% url "post:detail_page" id=123 %}".replace(/123/, data[field][i]['id']);
+                                var src_image = 'http://127.0.0.1:8000/media/' + data[field][i]["image"];
+                                $('.show_post_by_category').append('<section class="my-5">\n' +
+                                    '                          <div class="row">\n' +
+                                    '                            <div class="col-lg-5">\n' +
+                                    '                              <div class="view overlay rounded z-depth-2 mb-lg-0 mb-4">\n' +
+                                        '                                <img class="profileimg text-center img-fluid" src="'+src_image+'" alt="Sample image">\n' +
+                                    '                                  <a>\n' +
+                                    '                                  <div class="mask rgba-white-slight"></div>\n' +
+                                    '                                </a>\n' +
+                                    '                              </div>\n' +
+                                    '                            </div>\n' +
+                                    '                            <div class="col-lg-7">\n' +
+                                    '                            <h3 class="font-weight-bold mb-3"><strong>'+data[field][i]["title"]+'</strong></h3>\n'+
+                                    '                              <a href="'+url_mask_id+'" class="btn btn-success"><i class="fa fa-clone left"></i>Read more</a>\n' +
+                                    '                            </div>\n' +
+                                    '                          </div>\n' +
+                                    '                        </section>')
+                            }
+                        })
+
+                    }
+                })
+                {#if( $('#show_post').is(':empty')) {#}
+                {#    $('.show_post_by_category').append('<br><br><h2 class ="alert alert-info">No records in this category</div>');#}
+                {##}
+                {#}#}
+            })
+        })
+    </script>
 {% endblock %}

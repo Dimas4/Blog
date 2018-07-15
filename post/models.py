@@ -63,6 +63,9 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
+    def get_category_url(self):
+        return reverse("post:category_detail_view", kwargs={"slug": self.name})
+
     def __str__(self):
         return self.name
 

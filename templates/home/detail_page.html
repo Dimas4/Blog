@@ -38,9 +38,10 @@
 
     {% if request.user.is_authenticated %}
         <form action="." method="POST">
+            <input type="hidden" id="post" data-id="{{ post.id }}">
             {% csrf_token %}
             {{ form|crispy }}
-            <input type="submit"class="btn btn-success">
+            <input type="submit" class="btn btn-success" id="add_comment" data-toggle="modal" data-target="#myModal">
         </form>
     {% else %}
         <h2>If you want to add new comments, you must be register</h2>
@@ -48,6 +49,27 @@
     <hr>
     <h2>All comments:</h2>
     <br>
+    <br>
+    <div class="new_comment">
+
+    </div>
+    <br>
+
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            Comment successfully created
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% if comments %}
         {% for comment in comments %}
               <div class="row">
@@ -80,5 +102,67 @@
 
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        $('#add_comment').on('click', function (e) {
+            e.preventDefault();
+            var post_id = $('#post').attr('data-id');
+            var comment = $('#id_content').val()
+            data = {
+                post_id: post_id,
+                comment: comment,
+                csrfmiddlewaretoken: csrftoken
+            }
+            $.ajax({
+                type: "POST",
+                url: "{% url 'post:add_comment' %}",
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    data = data[0];
+                    var auth_id = data['author_id'];
+                    var url_mask = "{% url 'accounts:account' id=123 %}".replace(/123/, auth_id);
+                    $('.new_comment').prepend(
+                        "<div class=\"row\" style=\"margin-top: 24px;\">\n" +
+                        "    <div class=\"col-md-12\">\n" +
+                        "      <div class=\"mdb-feed\">\n" +
+                        "        <div class=\"news\">\n" +
+                        "          <div class=\"label\">\n" +
+                        "            <img src=\""+data['author_image']+"\" class=\"rounded-circle z-depth-1-half\">\n" +
+                        "          </div>\n" +
+                        "          <div class=\"excerpt\">\n" +
+                        "            <div class=\"brief\">\n" +
+                        "              <a class=\"name\" href=\""+url_mask+"\">"+data['author']+"</a>\n" +
+                        "            </div>\n" +
+                        "            <div class=\"added-text\">"+data['comment']+"</div>\n" +
+                        "          </div>\n" +
+                        "        </div>\n" +
+                        "      </div>\n" +
+                        "    </div>\n" +
+                        "  </div>"
+                        )
+                    $('#id_content').val('')
+                }
+            })
 
+        })
+    });
+</script>
+
+<br>
 {% endblock %}
