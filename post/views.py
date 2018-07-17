@@ -20,8 +20,10 @@ User = get_user_model()
 
 def category_view(request):
     categories = Category.objects.all().annotate(count_posts=Count('posts'))
+    posts = Posts.objects.filter(category=categories.first()).order_by('-timestamp')
     context = {
         "categories": categories,
+        'posts': posts
     }
     return render(request, "home/category_view.html", context)
 
@@ -59,7 +61,7 @@ def home_page(request):
     posts = Posts.objects.home()
     path = request.build_absolute_uri('/').strip("/")
     # Posts.objects.aggregate(average_views=Avg('views'))
-    popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:5]
+    popular_posts = Posts.objects.select_related("category", "user").all().order_by('-views')[:3]
     categories = Category.objects.all()[:5]
     path = request.build_absolute_uri('/').strip("/")
     context = {
@@ -180,10 +182,10 @@ def delete_page(request, id):
 def add_delete_like(model, user, id, model_type, obj, post):
     if obj.exists():
         obj.delete()
-        return HttpResponseRedirect(post.get_absolute_url())
+        return JsonResponse({'key': 0})
 
     model.objects.create(content_type=model_type, object_id=id, user=user)
-    return HttpResponseRedirect(post.get_absolute_url())
+    return JsonResponse({'key': 1})
 
 
 @login_required

@@ -20,11 +20,11 @@
           <hr>
             <h3 class="dark-grey-text">{{ post.content }}</h3>
             <hr>
-            <h4>Total likes: {{ post.total_likes }}</h4>
+            <h4 data-id="{{ post.total_likes }}" id="total_likes">Total likes: {{ post.total_likes }}</h4>
             {% if not check_like %}
-                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary">Like</a>
+                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary like_class" id="like_dislike" data-id="{{ post.id }}">Like</a>
             {% else %}
-                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning">Remove like</a>
+                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning like_class" id="like_dislike" data-id="{{ post.id }}">Remove like</a>
             {% endif %}
             <br><br>
             {% if request.user == post.user %}
@@ -54,8 +54,6 @@
 
     </div>
     <br>
-
-
 
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -159,6 +157,58 @@
                     $('#id_content').val('')
                 }
             })
+
+        })
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        $('.like_class').on('click', function (e) {
+            e.preventDefault();
+            var post_id = $('.like_class').attr('data-id');
+            data = {
+                post_id: post_id,
+                csrfmiddlewaretoken: csrftoken
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{% url "post:like_page" id=post.id%}",
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    var like_count = parseInt($('#total_likes').attr('data-id'));
+                    key = data['key'];
+                    if (key === 0) {
+                        $('.like_class').html('Like');
+                        var c = like_count - 1;
+                        $('#total_likes').html('Total likes: '+c);
+                        $('#total_likes').attr('data-id', c);
+                        document.getElementById("like_dislike").className = "btn btn-primary like_class";
+                    } else {
+                        $('.like_class').html('Remove like');
+                        var c = like_count + 1;
+                        $('#total_likes').html('Total likes: '+c);
+                        $('#total_likes').attr('data-id', c);
+                        document.getElementById("like_dislike").className = "btn btn-warning like_class";
+                    }
+                }
+            });
 
         })
     });

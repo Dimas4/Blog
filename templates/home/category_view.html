@@ -16,7 +16,7 @@
                     {% for category in categories %}
                      {% if forloop.first %}
                       <li role="presentation" class="active">
-                        <a class="nav-link category"  data-name="{{ category.name }}" role="tab" data-toggle="tab" href="#{{ category.name }}" role="tab" aria-controls="{{ category.name }}" aria-selected="true">{{ category.name }}</a>
+                        <a class="nav-link category active"  data-name="{{ category.name }}" role="tab" data-toggle="tab" href="#{{ category.name }}" role="tab" aria-controls="{{ category.name }}" aria-selected="true">{{ category.name }}</a>
                       </li>
                       {% else %}
                       <li role="presentation">
@@ -26,8 +26,26 @@
                     {% endif %}
                  {% endfor %}
 
-                <div class="show_post_by_category" id="show_post">
 
+                <div class="show_post_by_category" id="show_post">
+                    {% for post in posts %}
+                        <section class="my-5">
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="view overlay rounded z-depth-2 mb-lg-0 mb-4">
+                                        <img class="profileimg text-center img-fluid" src="{{ post.image.url }}" alt="Sample image">
+                                        <a>
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7">
+                                    <h3 class="font-weight-bold mb-3"><strong>{{ post.title }}</strong></h3>
+                                    <a href="{% url "post:detail_page" id=post.id %}" class="btn btn-success"><i class="fa fa-clone left"></i>Read more</a>
+                                </div>
+                            </div>
+                        </section>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -81,10 +99,7 @@
 
                     }
                 })
-                {#if( $('#show_post').is(':empty')) {#}
-                {#    $('.show_post_by_category').append('<br><br><h2 class ="alert alert-info">No records in this category</div>');#}
-                {##}
-                {#}#}
+
             })
         })
     </script>
