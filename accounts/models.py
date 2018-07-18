@@ -10,6 +10,8 @@ class UserProfile(models.Model):
                               blank=True,
                               default='media/social.jpg'
                               )
+    # 'effects.Effect', through = 'ItemEffect', blank = True
+    favorite_posts = models.ManyToManyField('post.Posts', blank=True)
 
     class Meta:
         verbose_name = 'UserProfile'

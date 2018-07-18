@@ -11,7 +11,8 @@ from .views import (
     category_view,
     category_detail_view,
     add_comment,
-    display_posts_by_category
+    display_posts_by_category,
+    add_to_favorite
     )
 
 app_name = 'post-api'
@@ -26,6 +27,7 @@ urlpatterns = [
     path('create/', create_post, name='create_post'),
     path('show_post_image/', dynamic_image, name='dynamic_image'),
     re_path('^(?P<id>\d+)/$', detail_page, name='detail_page'),
+    re_path('^(?P<id>\d+)/add_to_favorite/$', add_to_favorite, name='add_to_favorite'),
     re_path('^(?P<id>\d+)/like$', like_page, name='like_page'),
     re_path('^(?P<id>\d+)/edit/$', edit_page, name='edit_page'),
     re_path('^(?P<id>\d+)/delete/$', delete_page, name='delete_page'),

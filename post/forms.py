@@ -27,7 +27,7 @@ class FormCreateEdit(forms.ModelForm):
             raise forms.ValidationError('Add image to this post!')
         
         title = self.cleaned_data['title']
-        if is_ethic(title):
-            raise forms.ValidationError('Bad words in the title!')
+        # if is_ethic(title):
+        #     raise forms.ValidationError('Bad words in the title!')
 
         return super(FormCreateEdit, self).clean(*args, **kwargs)

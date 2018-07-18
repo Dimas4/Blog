@@ -61,7 +61,7 @@ def account_change_profile(request):
 def account_home(request, id):
     user = get_object_or_404(User, id=id)
 
-    userprofile = get_object_or_404(UserProfile, user=request.user)
+    userprofile = get_object_or_404(UserProfile, user=user)
     form = UploadImage()
 
     if request.POST:
@@ -72,10 +72,15 @@ def account_home(request, id):
             userprofile.save()
             return HttpResponseRedirect(userprofile.get_user_url())
 
+    favorite_posts = None
+    if request.user == user:
+        favorite_posts = userprofile.favorite_posts.prefetch_related().all()
+
     context = {
         'user': user,
         'form': form,
-        'userprofile': userprofile
+        'userprofile': userprofile,
+        'favorite_posts': favorite_posts
     }
     return render(request, "accounts/user_account.html", context)
 
@@ -93,8 +98,10 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect(reverse("post:home_page"))
+            if user:
+                login(request, user)
+                return redirect(reverse("post:home_page"))
+            return redirect(reverse("login_view"))
 
     context = {
         "form": form,

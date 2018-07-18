@@ -4,6 +4,7 @@ from django.contrib.auth import (
 )
 from django import forms
 
+
 from .models import UserProfile
 
 
@@ -55,9 +56,10 @@ class LoginForm(forms.Form):
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
         if username and password:
-            user = authenticate(username=username, password=password)
+            user = User.objects.filter(username=username).exists()
             if not user:
                 raise forms.ValidationError("This user does not exist")
+            user = User.objects.get(username=username)
             if not user.check_password(password):
                 raise forms.ValidationError("Incorrect passsword")
             if not user.is_active:
@@ -85,6 +87,9 @@ class RegisterForm(forms.ModelForm):
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
+        user_username = User.objects.filter(username=username)
+        if user_username.exists():
+            raise forms.ValidationError("A user with that username already exists.")
         if password != password2:
             raise forms.ValidationError("Password don't match")
         if len(password) < 8:

@@ -28,6 +28,16 @@ def category_view(request):
     return render(request, "home/category_view.html", context)
 
 
+def add_to_favorite(request, id):
+    post = Posts.objects.get(id=id)
+    userprofile = UserProfile.objects.get(user=request.user)
+    if post in userprofile.favorite_posts.all():
+        userprofile.favorite_posts.remove(post)
+        return JsonResponse({'key': 1})
+    userprofile.favorite_posts.add(post)
+    return JsonResponse({'key': 0})
+
+
 def category_detail_view(request, slug):
     posts = Posts.objects.filter(category__name=slug)
 
@@ -96,6 +106,7 @@ def add_comment(request):
 
 
 def detail_page(request, id):
+    userprofile = UserProfile.objects.get(user=request.user)
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
@@ -105,6 +116,7 @@ def detail_page(request, id):
                                      id=id)
 
     check_like = Posts.is_like(post, request.user)
+    check_favorite = Posts.is_favorite(post, request.user)
 
     post = post.update_view(id)
 
@@ -112,6 +124,7 @@ def detail_page(request, id):
         'post': post,
         'comments': comments,
         'check_like': check_like,
+        'check_favorite': check_favorite,
         'form': form
     }
 
@@ -120,6 +133,8 @@ def detail_page(request, id):
 
 @login_required
 def create_post(request):
+    form = FormCreateEdit()
+
     if request.POST:
         form = FormCreateEdit(request.POST, request.FILES or None)
         if form.is_valid():
@@ -129,8 +144,6 @@ def create_post(request):
             create.content = form.cleaned_data.get("content")
             create.save()
             return HttpResponseRedirect(create.get_absolute_url())
-
-    form = FormCreateEdit()
 
     context = {
         'form': form

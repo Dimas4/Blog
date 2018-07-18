@@ -26,8 +26,14 @@
             {% else %}
                 <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning like_class" id="like_dislike" data-id="{{ post.id }}">Remove like</a>
             {% endif %}
-            <br><br>
+            {% if not check_favorite %}
+                <a class="btn btn-success" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Add to favorite</a>
+            {% else %}
+                <a class="btn btn-warning" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Remove from favorite</a>
+            {% endif %}
+            <br>
             {% if request.user == post.user %}
+                <hr>
                 <a href="{{ post.edit_post }}" class="btn btn-success">Edit post</a>
                 <a href="{{ post.delete_post }}" class="btn btn-danger">Delete post</a>
             {% endif %}
@@ -101,6 +107,37 @@
     </div>
 </div>
 <script>
+$(document).ready(function(){
+    $('#favorite_add_remove').on('click', function (e) {
+        e.preventDefault();
+        var post_id = $('#favorite_add_remove').attr('data-id');
+        console.log(post_id)
+        var url_ajax = "{% url 'post:add_to_favorite' id=123 %}".replace('/123/', '/'+String(post_id)+'/');
+        data = {
+            post_id: post_id,
+        };
+        $.ajax({
+            type: "GET",
+            url: url_ajax,
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                if (data['key'] === 0){
+                    document.getElementById("favorite_add_remove").className = 'btn btn-warning';
+                    document.getElementById("favorite_add_remove").textContent="Remove from favorite";
+
+                } else {
+                    document.getElementById("favorite_add_remove").className = 'btn btn-success';
+                    document.getElementById("favorite_add_remove").textContent="Add to favorite";
+
+                }
+            }
+        })
+
+    })
+})
+</script>
+<script>
     $(document).ready(function(){
         function getCookie(name) {
             var cookieValue = null;
@@ -163,31 +200,15 @@
 </script>
 <script>
     $(document).ready(function(){
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        var csrftoken = getCookie('csrftoken');
         $('.like_class').on('click', function (e) {
             e.preventDefault();
             var post_id = $('.like_class').attr('data-id');
             data = {
                 post_id: post_id,
-                csrfmiddlewaretoken: csrftoken
             };
 
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url: "{% url "post:like_page" id=post.id%}",
                 dataType: "json",
                 data: data,

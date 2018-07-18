@@ -7,8 +7,9 @@ from django.db import models
 
 import math
 
-from rest_framework.reverse import reverse as api_reverse
 
+from rest_framework.reverse import reverse as api_reverse
+from accounts.models import UserProfile
 from comments.models import Comments
 from likes.models import Like
 
@@ -127,6 +128,12 @@ class Posts(models.Model):
         obj_type = ContentType.objects.get_for_model(self)
         likes = Like.objects.filter(content_type=obj_type, object_id=self.id, user=user)
         return likes.exists()
+
+    def is_favorite(self, user):
+        if not user.is_authenticated:
+            return False
+        userprofile = UserProfile.objects.get(user=user)
+        return self in userprofile.favorite_posts.all()
 
     def get_api_url(self, request=None):
         return api_reverse("post-api:detail", kwargs={"pk": self.pk}, request=request)
