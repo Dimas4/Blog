@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'comments',
     'crispy_forms',
     'chat_message',
+    'baskets',
 
     'rest_framework',
     'rest_framework.authtoken',

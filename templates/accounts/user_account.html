@@ -10,7 +10,11 @@
             {% if user.id == request.user.id %}
             <h2>Welcome to your profile!</h2>
                 <hr>
-                <h2>Your favourite posts:</h2>
+                {% if userprofile.favorite_posts.all %}
+                    <h2>Your favourite posts:</h2>
+                {% else %}
+                    <h2>Your haven't favorite posts yet</h2>
+                {% endif %}
                 <div class="row">
                 {% for favorite_post in userprofile.favorite_posts.all  %}
                     {% if forloop.counter0|divisibleby:4 %}
@@ -35,6 +39,122 @@
                     </div>
                 {% endfor %}
                 </div>
+                <hr>
+
+                {% if baskets != 'False' %}
+                        <div class="container" id='buy_count' data-len="{{ baskets_len }}">
+                            <div class="row">
+                                    <div class="body">
+                                        <div class="table">
+                                            <table class="table product-table">
+                                                <thead class="mdb-color lighten-5">
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="font-weight-bold">
+                                                            <strong>Title</strong>
+                                                        </th>
+                                                        <th class="font-weight-bold">
+                                                            <strong>Category</strong>
+                                                        </th>
+                                                        <th></th>
+                                                        <th class="font-weight-bold">
+                                                            <strong>QTY</strong>
+                                                        </th>
+                                                        <th class="font-weight-bold">
+                                                            <strong>Price</strong>
+                                                        </th>
+                                                        <th class="font-weight-bold">
+                                                            <strong>Delete</strong>
+                                                        </th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for product in  baskets %}
+                                                    <tr>
+                                                        <th scope="row">
+                                                            <img src="{{ product.image.url }}" alt="" class="img-fluid z-depth-0">
+                                                        </th>
+                                                        <td>
+                                                            <h5 class="mt-3">
+                                                                <strong>{{ product.title|truncatechars:20 }}</strong>
+                                                            </h5>
+                                                        </td>
+                                                        <td>{{ product.category.name }}</td>
+                                                        <td></td>
+                                                        <td>
+                                                            <input oninput="return ChangeInput(this);"  type="number" value="2" data-pred-val="2" aria-label="Search" class="form-control new-input" data-price="{{ product.views }}" id='count_element{{ forloop.counter }}' style="width: 100px">
+                                                        </td>
+                                                        <td class="font-weight-bold">
+                                                            <strong id="id_tr{{ forloop.counter }}">{{ product.views }}</strong>
+                                                        </td>
+                                                        <td>
+                                                            <a href="{% url "accounts:remove_from_basket" id_element=product.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Remove item">X
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                                    <tr>
+                                                        <td colspan="3"></td>
+                                                        <td>
+                                                            <h4 class="mt-2">
+                                                                <strong>Total</strong>
+                                                            </h4>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <h4 class="mt-2">
+                                                                <strong class="price-buy">$2600</strong>
+                                                            </h4>
+                                                        </td>
+                                                        <td colspan="3" class="text-right">
+                                                            <button type="button" class="btn btn-primary btn-rounded">Complete purchase
+                                                                <i class="fa fa-angle-right right"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                            </div>
+                            </div>
+                        </div>
+            {% endif %}
+
+                <script>
+                    window.onload = function() {
+                        var count = $('#buy_count').attr('data-len');
+                        var myArray = [];
+                        var sum = 0;
+                        for (var i=1; i<=count; i++){
+                            var element = $('#id_tr'+String(i)).text();
+                            var price = $('#count_element'+String(i)).val();
+                            sum = sum + parseInt(element) * parseInt(price);
+                        }
+                        $('.price-buy').text(sum);
+                    };
+                </script>
+                <script>
+                    function ChangeInput(Element) {
+                        var pred = $(Element).attr('data-pred-val')
+
+                        $(Element).attr('data-pred-val', Element.value)
+                        var value_input = Element.value
+                        var sum = 0
+                        if (pred<value_input){
+                            sum = parseInt($('.price-buy').text()) + parseInt($(Element).attr('data-price') * (value_input-pred));
+                        } else {
+                            sum = parseInt($('.price-buy').text()) - (parseInt($(Element).attr('data-price')) * (pred-value_input));
+                        }
+                        $('.price-buy').text(sum);
+
+                    }
+                </script>
+
+
+                <hr>
+                <br>
             {% else %}
                 <h2>Welcome to {{ user.username }}'s profile!</h2>
             {% endif %}

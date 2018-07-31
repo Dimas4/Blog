@@ -1,5 +1,7 @@
 from django import forms
 
+
+from baskets.models import Basket
 from .models import Posts
 
 
@@ -9,6 +11,16 @@ def is_ethic(title):
         if i in title:
             return True
     return False
+
+
+class FormBasket(forms.ModelForm):
+    description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Some text...'}))
+
+    class Meta:
+        model = Basket
+        fields = [
+            'description'
+        ]
 
 
 class FormCreateEdit(forms.ModelForm):

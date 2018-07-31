@@ -1,0 +1,41 @@
+{% extends "home/base.html" %}
+
+
+{% block content %}
+    <br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                {% if posts %}
+                    {% for post in posts %}
+                        {% if forloop.counter0|divisibleby:3 %}
+                        </div><br><div class="row">
+                    {% endif %}
+                        <div class="col-xs-6 col-lg-3" style="margin-left: 65px; margin-bottom: 17px;">
+                            <div class="card card-cascade width_card">
+                              <div class="view view-cascade overlay">
+                                  {% if post.image %}
+                                      <div class="view zoom">
+                                        <img src="{{ post.image.url }}" class="img-fluid " alt="">
+                                    </div>
+                                      <div class="mask flex-center rgba-black-strong">
+                                        <p class="white-text">Author: {{ post.user.username }}</p>
+                                    </div>
+                                {% endif %}
+                              </div>
+                              <div class="card-body card-body-cascade text-center">
+                                <h4 class="card-title"><strong><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></strong></h4>
+                                <p class="card-text"> User: <a href="{{ post.get_user_url }}">{{ post.user.username }}</a> | Article rate: {{ post.rate }} Category: <a href="{% url "post:category_detail_view" slug=post.category.name %}">{{ post.category.name }}</a></p>
+                                <a href="{{ post.get_absolute_url }}" class="btn peach-gradient btn-lg ">Read more</a>
+                              </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h2 class="alert alert-info">We can not find a posts with these parameters</h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

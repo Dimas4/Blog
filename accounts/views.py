@@ -8,7 +8,11 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+
+from django.contrib.auth.decorators import login_required
+from baskets.models import Basket
 from .models import UserProfile
+from post.models import Posts
 from .forms import (
     LoginForm,
     RegisterForm,
@@ -16,6 +20,13 @@ from .forms import (
     ChangePassword,
     UploadImage
     )
+
+
+@login_required
+def remove_from_basket(request, id_element):
+    post = Posts.objects.get(id=id_element)
+    basket = Basket.objects.get(user=request.user).product.remove(post)
+    return HttpResponseRedirect(post.get_user_url())
 
 
 def change_password(request):
@@ -61,6 +72,12 @@ def account_change_profile(request):
 def account_home(request, id):
     user = get_object_or_404(User, id=id)
 
+    baskets = 'False'
+    if request.user.is_authenticated:
+        basket = Basket.objects.filter(user=request.user)
+        if basket.exists():
+            baskets = basket[0].product.prefetch_related().all()
+
     userprofile = get_object_or_404(UserProfile, user=user)
     form = UploadImage()
 
@@ -80,7 +97,9 @@ def account_home(request, id):
         'user': user,
         'form': form,
         'userprofile': userprofile,
-        'favorite_posts': favorite_posts
+        'favorite_posts': favorite_posts,
+        'baskets': baskets,
+        'baskets_len': len(baskets)
     }
     return render(request, "accounts/user_account.html", context)
 

@@ -21,15 +21,23 @@
             <h3 class="dark-grey-text">{{ post.content }}</h3>
             <hr>
             <h4 data-id="{{ post.total_likes }}" id="total_likes">Total likes: {{ post.total_likes }}</h4>
-            {% if not check_like %}
-                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary like_class" id="like_dislike" data-id="{{ post.id }}">Like</a>
-            {% else %}
-                <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning like_class" id="like_dislike" data-id="{{ post.id }}">Remove like</a>
-            {% endif %}
-            {% if not check_favorite %}
-                <a class="btn btn-success" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Add to favorite</a>
-            {% else %}
-                <a class="btn btn-warning" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Remove from favorite</a>
+            {% if user.is_authenticated %}
+                {% if not check_like %}
+                    <a href="{% url "post:like_page" id=post.id%}" class="btn btn-primary like_class" id="like_dislike" data-id="{{ post.id }}">Like</a>
+                {% else %}
+                    <a href="{% url "post:like_page" id=post.id%}" class="btn btn-warning like_class" id="like_dislike" data-id="{{ post.id }}">Remove like</a>
+                {% endif %}
+
+                {% if not check_favorite %}
+                    <a class="btn btn-success" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Add to favorite</a>
+                {% else %}
+                    <a class="btn btn-warning" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Remove from favorite</a>
+                {% endif %}
+                {% if basket == 'False' %}
+                    <a href="{% url "post:add_to_basket" id=post.id slug='Add' %}" class="btn btn-success">Add to basket</a>
+                {% else %}
+                    <a href="{% url "post:add_to_basket" id=post.id slug='Remove' %}" class="btn btn-success">Remove from basket</a>
+                {% endif %}
             {% endif %}
             <br>
             {% if request.user == post.user %}
@@ -41,7 +49,6 @@
       </div>
         <hr>
     </section>
-
     {% if request.user.is_authenticated %}
         <form action="." method="POST">
             <input type="hidden" id="post" data-id="{{ post.id }}">

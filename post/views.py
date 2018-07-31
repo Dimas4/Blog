@@ -3,15 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth import get_user_model
+from django.db.models import Count, Q
 from django.http import JsonResponse
-from django.db.models import Count
 from django.urls import reverse
 
+
 from .models import Posts, Category, content_type_queryset
+from .forms import FormCreateEdit, FormBasket
 from accounts.models import UserProfile
 from comments.forms import CommentForm
 from comments.models import Comments
-from .forms import FormCreateEdit
+from baskets.models import Basket
 from likes.models import Like
 
 
@@ -36,6 +38,41 @@ def add_to_favorite(request, id):
         return JsonResponse({'key': 1})
     userprofile.favorite_posts.add(post)
     return JsonResponse({'key': 0})
+
+
+def search(request):
+    queryset = request.GET.get('q')
+    posts = Posts.objects.filter(
+        Q(title__icontains=queryset)|
+        Q(content__icontains=queryset)
+    )
+    context = {
+        'posts': posts
+    }
+    return render(request, "home/found_page.html",context)
+
+
+@login_required
+def add_to_basket(request, id, slug):
+    if slug not in ['Add', 'Remove']:
+        return Http404
+    post = Posts.objects.get(id=id)
+    basket_get = Basket.objects.filter(user=request.user)
+
+    if basket_get.exists():
+        if slug == 'Add':
+            basket_get[0].product.add(post)
+        else:
+            basket_get[0].product.remove(post)
+        return HttpResponseRedirect(post.get_absolute_url())
+
+    basket = Basket.objects.create(
+        user=request.user,
+        price=post.views
+    )
+    basket.product.add(post)
+
+    return HttpResponseRedirect(post.get_absolute_url())
 
 
 def category_detail_view(request, slug):
@@ -106,7 +143,6 @@ def add_comment(request):
 
 
 def detail_page(request, id):
-    userprofile = UserProfile.objects.get(user=request.user)
     post = Posts.objects.select_related("category", "user").get(id=id)
     content_type = ContentType.objects.get_for_model(Comments)
 
@@ -120,12 +156,20 @@ def detail_page(request, id):
 
     post = post.update_view(id)
 
+    basket = 'False'
+    try:
+        basket = Basket.objects.filter(user=request.user)
+        basket = 'True' if post in basket[0].product.all() else 'False'
+    except:
+        pass
+
     context = {
         'post': post,
         'comments': comments,
         'check_like': check_like,
         'check_favorite': check_favorite,
-        'form': form
+        'form': form,
+        'basket': basket
     }
 
     return render(request, "home/detail_page.html", context)
