@@ -4,7 +4,7 @@ from django.contrib.auth import (
     logout,
     )
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -26,7 +26,7 @@ from .forms import (
 def remove_from_basket(request, id_element):
     post = Posts.objects.get(id=id_element)
     basket = Basket.objects.get(user=request.user).product.remove(post)
-    return HttpResponseRedirect(post.get_user_url())
+    return JsonResponse({'ok': 'ok'})
 
 
 def change_password(request):

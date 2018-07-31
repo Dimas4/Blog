@@ -33,11 +33,13 @@
                 {% else %}
                     <a class="btn btn-warning" id="favorite_add_remove" href="{% url "post:add_to_favorite" id=post.id  %}" data-id="{{ post.id }}">Remove from favorite</a>
                 {% endif %}
+                <div id="BasketDiv">
                 {% if basket == 'False' %}
-                    <a href="{% url "post:add_to_basket" id=post.id slug='Add' %}" class="btn btn-success">Add to basket</a>
+                    <a href="{% url "post:add_to_basket" id=post.id %}" data-action="Add" id="Basketid" data-id="{{ post.id }}" class="btn btn-success basket_new">Add to basket</a>
                 {% else %}
-                    <a href="{% url "post:add_to_basket" id=post.id slug='Remove' %}" class="btn btn-success">Remove from basket</a>
+                    <a href="{% url "post:add_to_basket" id=post.id %}" data-action="Remove" id="Basketid" data-id="{{ post.id }}" class="btn btn-warning basket_new">Remove from basket</a>
                 {% endif %}
+                </div>
             {% endif %}
             <br>
             {% if request.user == post.user %}
@@ -118,7 +120,6 @@ $(document).ready(function(){
     $('#favorite_add_remove').on('click', function (e) {
         e.preventDefault();
         var post_id = $('#favorite_add_remove').attr('data-id');
-        console.log(post_id)
         var url_ajax = "{% url 'post:add_to_favorite' id=123 %}".replace('/123/', '/'+String(post_id)+'/');
         data = {
             post_id: post_id,
@@ -238,6 +239,35 @@ $(document).ready(function(){
                 }
             });
 
+        })
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $('.basket_new').on('click', function (e) {
+            e.preventDefault();
+            var post_id = $('.basket_new').attr('data-id');
+            data = {
+                post_id: post_id,
+            };
+            $.ajax({
+                type: "GET",
+                url: "{% url "post:add_to_basket" id=post.id %}",
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    if (data['ok'] == 'Added'){
+                        document.getElementById("Basketid").className = "btn btn-warning basket_new";
+                        document.getElementById("Basketid").innerHTML  = "REMOVE FROM BASKET";
+                        $(this).attr('data-action', 'Remove');
+                    }
+                    if (data['ok'] == 'Removed'){
+                        document.getElementById("Basketid").className = "btn btn-success basket_new";
+                        document.getElementById("Basketid").innerHTML  = "ADD TO BASKET";
+                        $('.basket_new').attr('data-action', 'Add');
+                    }
+                }
+            });
         })
     });
 </script>

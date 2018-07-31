@@ -71,7 +71,7 @@
                                                 </thead>
                                                 <tbody>
                                                 {% for product in  baskets %}
-                                                    <tr>
+                                                    <tr id="{{ product.id }}list">
                                                         <th scope="row">
                                                             <img src="{{ product.image.url }}" alt="" class="img-fluid z-depth-0">
                                                         </th>
@@ -83,13 +83,13 @@
                                                         <td>{{ product.category.name }}</td>
                                                         <td></td>
                                                         <td>
-                                                            <input oninput="return ChangeInput(this);"  type="number" value="2" data-pred-val="2" aria-label="Search" class="form-control new-input" data-price="{{ product.views }}" id='count_element{{ forloop.counter }}' style="width: 100px">
+                                                            <input oninput="return ChangeInput(this);"  type="number" value="1" data-pred-val="1" aria-label="Search" class="form-control new-input" data-price="{{ product.views }}" id='count_element{{ forloop.counter }}' style="width: 100px">
                                                         </td>
                                                         <td class="font-weight-bold">
                                                             <strong id="id_tr{{ forloop.counter }}">{{ product.views }}</strong>
                                                         </td>
                                                         <td>
-                                                            <a href="{% url "accounts:remove_from_basket" id_element=product.id %}" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Remove item">X
+                                                            <a href="{% url "accounts:remove_from_basket" id_element=product.id %}" data-id="{{ product.id }}" class="btn btn-sm btn-primary remove_from_list" data-toggle="tooltip" data-placement="top" title="Remove item">X
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -121,37 +121,6 @@
                             </div>
                         </div>
             {% endif %}
-
-                <script>
-                    window.onload = function() {
-                        var count = $('#buy_count').attr('data-len');
-                        var myArray = [];
-                        var sum = 0;
-                        for (var i=1; i<=count; i++){
-                            var element = $('#id_tr'+String(i)).text();
-                            var price = $('#count_element'+String(i)).val();
-                            sum = sum + parseInt(element) * parseInt(price);
-                        }
-                        $('.price-buy').text(sum);
-                    };
-                </script>
-                <script>
-                    function ChangeInput(Element) {
-                        var pred = $(Element).attr('data-pred-val')
-
-                        $(Element).attr('data-pred-val', Element.value)
-                        var value_input = Element.value
-                        var sum = 0
-                        if (pred<value_input){
-                            sum = parseInt($('.price-buy').text()) + parseInt($(Element).attr('data-price') * (value_input-pred));
-                        } else {
-                            sum = parseInt($('.price-buy').text()) - (parseInt($(Element).attr('data-price')) * (pred-value_input));
-                        }
-                        $('.price-buy').text(sum);
-
-                    }
-                </script>
-
 
                 <hr>
                 <br>
@@ -202,6 +171,36 @@
 </div>
 
 <script>
+    window.onload = function() {
+        var count = $('#buy_count').attr('data-len');
+        var myArray = [];
+        var sum = 0;
+        for (var i=1; i<=count; i++){
+            var element = $('#id_tr'+String(i)).text();
+            var price = $('#count_element'+String(i)).val();
+            sum = sum + parseInt(element) * parseInt(price);
+        }
+        $('.price-buy').text(sum);
+    };
+</script>
+    
+<script>
+    function ChangeInput(Element) {
+        var pred = $(Element).attr('data-pred-val')
+
+        $(Element).attr('data-pred-val', Element.value)
+        var value_input = Element.value
+        var sum = 0
+        if (pred<value_input){
+            sum = parseInt($('.price-buy').text()) + parseInt($(Element).attr('data-price') * (value_input-pred));
+        } else {
+            sum = parseInt($('.price-buy').text()) - (parseInt($(Element).attr('data-price')) * (pred-value_input));
+        }
+        $('.price-buy').text(sum);
+    }
+</script>
+
+<script>
 $(document).ready(function(){
     $('.favorite_add_remove').on('click', function (e) {
         e.preventDefault();
@@ -224,6 +223,31 @@ $(document).ready(function(){
 
     })
 })
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('.remove_from_list').on('click', function (e) {
+            e.preventDefault();
+            var post_id = $(this).attr('data-id');
+            console.log(post_id)
+            var url_ajax = "{% url 'accounts:remove_from_basket' id_element=123 %}".replace('/123/', '/'+String(post_id)+'/');
+            data = {
+                post_id: post_id,
+            };
+            console.log(url_ajax);
+            $.ajax({
+                type: "GET",
+                url: url_ajax,
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    document.getElementById(post_id+'list').remove();
+                }
+            })
+
+        })
+    })
 </script>
 
 {% endblock %}

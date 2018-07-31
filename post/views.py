@@ -53,18 +53,16 @@ def search(request):
 
 
 @login_required
-def add_to_basket(request, id, slug):
-    if slug not in ['Add', 'Remove']:
-        return Http404
+def add_to_basket(request, id):
     post = Posts.objects.get(id=id)
     basket_get = Basket.objects.filter(user=request.user)
-
     if basket_get.exists():
-        if slug == 'Add':
+        if post not in basket_get[0].product.prefetch_related().all():
             basket_get[0].product.add(post)
+            return JsonResponse({'ok': 'Added'})
         else:
             basket_get[0].product.remove(post)
-        return HttpResponseRedirect(post.get_absolute_url())
+            return JsonResponse({'ok': 'Removed'})
 
     basket = Basket.objects.create(
         user=request.user,
@@ -72,7 +70,7 @@ def add_to_basket(request, id, slug):
     )
     basket.product.add(post)
 
-    return HttpResponseRedirect(post.get_absolute_url())
+    return JsonResponse({'ok': 'Added'})
 
 
 def category_detail_view(request, slug):
